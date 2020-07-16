@@ -1,3 +1,3 @@
 # Mp3Converter
 
-Application de conversion de vidéo youtube en fichier mp3
+Application de conversion de vidéos youtube en fichier mp3
