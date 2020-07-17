@@ -8,8 +8,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import commande.CommandeAjout;
+import commande.CommandeReset;
 import commande.CommandeSuppression;
 import commande.Gestionnaire;
+import event.action.ActionEventAnnuler;
+import event.action.ActionEventLoadAppend;
+import event.action.ActionEventLoadReset;
+import event.action.ActionEventQuitter;
+import event.action.ActionEventRedo;
+import event.action.ActionEventSave;
+import event.mouse.MouseEventAjout;
+import event.mouse.MouseEventConversion;
+import event.mouse.MouseEventSuppression;
 import exception.PasDeResultatException;
 import fichier.FileManager;
 import javafx.concurrent.WorkerStateEvent;
@@ -26,6 +36,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
@@ -54,7 +65,7 @@ public class Selection extends BorderPane {
 	private TableVideo table = new TableVideo();
 	private Button boutonAjout = new Button("Ajouter"),
 			boutonSuppression = new Button("Supprimer"),
-			BoutonConvertir = new Button("Convertir");
+			boutonConvertir = new Button("Convertir");
 	private ChoiceBox<String> menuBitRate = new ChoiceBox<>();
 	
 	private MenuBar menuBar = new MenuBar();
@@ -76,7 +87,7 @@ public class Selection extends BorderPane {
 		this.stage = stage;
 		this.boutonAjout.setMinWidth(TAILLE_BOUTON);
 		this.boutonSuppression.setMinWidth(TAILLE_BOUTON);
-		this.BoutonConvertir.setMinWidth(TAILLE_BOUTON);
+		this.boutonConvertir.setMinWidth(TAILLE_BOUTON);
 		
 		menuFichier.getItems().add(itemSave);
 		
@@ -110,7 +121,7 @@ public class Selection extends BorderPane {
 		gridBouton.add(menuBitRate, 0, 0);
 		gridBouton.add(boutonAjout, 0, 1);
 		gridBouton.add(boutonSuppression, 0, 2);
-		gridBouton.add(BoutonConvertir, 0, 3);
+		gridBouton.add(boutonConvertir, 0, 3);
 		
 		GridPane gridTotal = new GridPane();
 		gridTotal.add(table, 0, 0);
@@ -128,92 +139,33 @@ public class Selection extends BorderPane {
 	 * Ajoute les événements aux différents boutons.
 	 */
 	protected void addEvent() {
-		boutonAjout.setOnMouseClicked(evt -> {
-			String url;
-			try {
-				url = showInputDIalogAjout();
-				addLineToTable(url);
-			} catch (PasDeResultatException e) {
-				
-			} 
-		});
-		boutonSuppression.setOnMouseClicked(evt -> {
-			removeLine();
-		});
-		BoutonConvertir.setOnMouseClicked(evt -> {
-			convertir();
-		});
-		itemSave.setOnAction(evt -> {
-			if(table.getItems().isEmpty()) {
-				logger.showWarningAlertNoFileToSave();
-				return;
-			}
-			try {
-				FileManager.getInstance();
-				fileManager.save(stage, table.getItems().stream().collect(Collectors.toList()));
-			}
-			catch(IOException e) {
-				logger.showErrorAlert(e);
-			}
-		});
-		itemLoadAppend.setOnAction(evt -> {
-			List<Video> listeVideos = null;
-			try {
-				listeVideos = fileManager.load(stage);
-			} catch (ClassNotFoundException | IOException e) {
-				logger.showErrorAlert(e);
-			}
-			if(listeVideos == null || listeVideos.isEmpty())
-				return;
-			gestionnaire.addCommande(new CommandeAjout(table, listeVideos));
-			gestionnaire.executer();
-			updateActionPossibleGestionnaire();
-		});
-		itemLoadReset.setOnAction(evt -> {
-			List<Video> listeVideos = null;
-			try {
-				listeVideos = fileManager.load(stage);
-			} catch (ClassNotFoundException | IOException e) {
-				logger.showErrorAlert(e);
-			}
-			if(listeVideos == null || listeVideos.isEmpty())
-				return;
-			if(!table.getItems().isEmpty()) {
-				gestionnaire.addCommande(new CommandeSuppression(table, table.getItems()));
-				gestionnaire.executer();
-			}
-			gestionnaire.addCommande(new CommandeAjout(table, listeVideos));
-			gestionnaire.executer();
-			updateActionPossibleGestionnaire();
-		});
-		itemQuitter.setOnAction(evt -> {
-			System.exit(0);
-		});
-		itemActionAnnuler.setOnAction(evt -> {
-			try {
-				gestionnaire.annuler();
-			}
-			catch(IndexOutOfBoundsException e) {
-				
-			}
-			updateActionPossibleGestionnaire();
-		});
-		itemActionReexecuter.setOnAction(evt -> {
-			try {
-				gestionnaire.reexecuter();
-			}
-			catch(IndexOutOfBoundsException e) {
-				
-			}
-			updateActionPossibleGestionnaire();
-		});
+		boutonAjout.setOnMouseClicked(new MouseEventAjout(this));
+		boutonSuppression.setOnMouseClicked(new MouseEventSuppression(this));
+		boutonConvertir.setOnMouseClicked(new MouseEventConversion(this));
+		
+		itemSave.setOnAction(new ActionEventSave(this));
+		itemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+
+		itemLoadAppend.setOnAction(new ActionEventLoadAppend(this));
+		itemLoadAppend.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
+
+		itemLoadReset.setOnAction(new ActionEventLoadReset(this));
+		itemLoadReset.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
+		
+		itemQuitter.setOnAction(new ActionEventQuitter(this));
+
+		itemActionAnnuler.setOnAction(new ActionEventAnnuler(this));
+		itemActionAnnuler.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
+		
+		itemActionReexecuter.setOnAction(new ActionEventRedo(this));
+		itemActionReexecuter.setAccelerator(KeyCombination.keyCombination("Ctrl+Y"));
 	}
 	
 	/**
 	 * Ajoute une vidéos à la table. Modifie l'affichage en conséquence.
 	 * @param url
 	 */
-	private void addLineToTable(String url) {
+	public void addLineToTable(String url) {
 		ArrayList<String> listeUrls = new ArrayList<>();
 		listeUrls.add(url);
 		TacheCharger tache = new TacheCharger(listeUrls);
@@ -244,7 +196,7 @@ public class Selection extends BorderPane {
 	/**
 	 * Supprime une ligne de la table.
 	 */
-	private void removeLine() {
+	public void removeLine() {
 	    int selectedIndex = table.getSelectionModel().getSelectedIndex();
 	    if (selectedIndex >= 0) {
 	    	ArrayList<Video> listeVideos = new ArrayList<>();
@@ -296,7 +248,7 @@ public class Selection extends BorderPane {
 	/**
 	 * Convertit la liste de vidéos en fichier mp3.
 	 */
-	private void convertir() {
+	public void convertir() {
 		if(table.getItems().isEmpty()) {
 			logger.showWarningAlertConvertisseurVide();
 			return;
@@ -316,7 +268,7 @@ public class Selection extends BorderPane {
 		TableViewSelectionModel<Video> defaultSelectionModel = table.getSelectionModel();
 		boutonAjout.setDisable(true);
 		boutonSuppression.setDisable(true);
-		BoutonConvertir.setDisable(true);
+		boutonConvertir.setDisable(true);
 		table.setSelectionModel(null);
 		tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED,
                 new EventHandler<WorkerStateEvent>() {
@@ -332,13 +284,75 @@ public class Selection extends BorderPane {
         		table.setSelectionModel(defaultSelectionModel);
         		boutonAjout.setDisable(false);
         		boutonSuppression.setDisable(false);
-        		BoutonConvertir.setDisable(false);
+        		boutonConvertir.setDisable(false);
             }
         });
 		new Thread(tache).start();
 		indicateur.progressProperty().unbind();
 		indicateur.progressProperty().bind(tache.progressProperty());
 		labelIndicateur.textProperty().bind(tache.messageProperty());
+	}
+	
+	public void sauvegarder() {
+		if(table.getItems().isEmpty()) {
+			logger.showWarningAlertNoFileToSave();
+			return;
+		}
+		try {
+			FileManager.getInstance();
+			fileManager.save(stage, table.getItems().stream().collect(Collectors.toList()));
+		}
+		catch(IOException e) {
+			logger.showErrorAlert(e);
+		}
+	}
+	
+	public void loadAppend() {
+		List<Video> listeVideos = null;
+		try {
+			listeVideos = fileManager.load(stage);
+		} catch (ClassNotFoundException | IOException e) {
+			logger.showErrorAlert(e);
+		}
+		if(listeVideos == null || listeVideos.isEmpty())
+			return;
+		gestionnaire.addCommande(new CommandeAjout(table, listeVideos));
+		gestionnaire.executer();
+		updateActionPossibleGestionnaire();
+	}
+	
+	public void loadReset() {
+		List<Video> listeVideos = null;
+		try {
+			listeVideos = fileManager.load(stage);
+		} catch (ClassNotFoundException | IOException e) {
+			logger.showErrorAlert(e);
+		}
+		if(listeVideos == null || listeVideos.isEmpty())
+			return;
+		gestionnaire.addCommande(new CommandeReset(table, listeVideos));
+		gestionnaire.executer();
+		updateActionPossibleGestionnaire();
+	}
+	
+	public void annuler() {
+		try {
+			gestionnaire.annuler();
+		}
+		catch(IndexOutOfBoundsException e) {
+			
+		}
+		updateActionPossibleGestionnaire();
+	}
+	
+	public void reexecuter() {
+		try {
+			gestionnaire.reexecuter();
+		}
+		catch(IndexOutOfBoundsException e) {
+			
+		}
+		updateActionPossibleGestionnaire();
 	}
 	
 	/**

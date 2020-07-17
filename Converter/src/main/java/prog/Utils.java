@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Utils {
 
+	public static final int TIMEOUT = 3000;
+	
 	/**
 	 * Convertit une Url en une map correspondant aux paramètres de cette Url.
 	 * @param query
