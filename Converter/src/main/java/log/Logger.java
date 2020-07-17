@@ -103,7 +103,7 @@ public class Logger {
 		if(listeUrlsErreur.isEmpty() && listeUrlsMauvaisLien.isEmpty())
 			return;
 		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Des problèmes sont apparus durant le chargement de vos vidéos");
+		alert.setTitle("Un problème est survenu");
 		alert.setHeaderText("Certaines vidéos n'ont pu être chargées");
 		StringBuilder probleme = new StringBuilder();
 		if(!listeUrlsMauvaisLien.isEmpty()) {

@@ -12,7 +12,6 @@ import commande.CommandeSuppression;
 import commande.Gestionnaire;
 import exception.PasDeResultatException;
 import fichier.FileManager;
-import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -224,12 +223,12 @@ public class Selection extends BorderPane {
             @Override
             public void handle(WorkerStateEvent t) {
                 List<Video> listeVideos = tache.getValue();
-                if(listeVideos == null || listeVideos.isEmpty())
-                	return;
-        		gestionnaire.addCommande(new CommandeAjout(table, listeVideos));
-        		gestionnaire.executer();
         		labelIndicateur.textProperty().unbind();
         		labelIndicateur.setText(listeVideos.size() + " vidéo(s) chargée(s)");
+                if(!listeVideos.isEmpty()) {
+	        		gestionnaire.addCommande(new CommandeAjout(table, listeVideos));
+	        		gestionnaire.executer();
+                }
         		if(!tache.getListeUrlsMauvaisLien().isEmpty() || !tache.getListeUrlsErreur().isEmpty())
         			logger.showErrorAlertVideosNonChargees(tache.getListeUrlsMauvaisLien(), tache.getListeUrlsErreur());
     			updateActionPossibleGestionnaire();
@@ -282,7 +281,7 @@ public class Selection extends BorderPane {
 	 * @throws PasDeResultatException
 	 */
 	public String showInputDIalogAjout() throws PasDeResultatException {
-		TextInputDialog dialog = new TextInputDialog("walter");
+		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Sélection");
 		dialog.setHeaderText("Donnez un lien de vidéo");
 		dialog.setContentText("lien : ");
