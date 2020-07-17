@@ -16,7 +16,6 @@ public class CommandeReset extends Commande {
 
 	@Override
 	public void execute() {
-		System.out.println("oui");
 		listeVideosSupprimees = table.removeAll();
 		table.addAll(listeVideos);
 	}

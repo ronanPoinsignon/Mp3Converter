@@ -3,11 +3,13 @@ package log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Optional;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import prog.Video;
@@ -185,6 +187,21 @@ public class Logger {
 		alert.setContentText("Veuillez ajouter au moins une vidéo à la liste pour effectuer cette action");
 
 		alert.showAndWait();
+	}
+	
+
+	public boolean canQuit() {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Vous n'avez pas sauvegardé");
+		alert.setHeaderText("Votre travail n'a pas été sauvegardé");
+		alert.setContentText("Êtes-vous sûr de vouloir quitter l'application ?");
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+		    return true;
+		} else {
+		    return false;
+		}
 	}
 	
 }

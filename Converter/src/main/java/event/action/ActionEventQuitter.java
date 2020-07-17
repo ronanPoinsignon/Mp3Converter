@@ -16,7 +16,7 @@ public class ActionEventQuitter extends ActionEventHandler {
 
 	@Override
 	public void handle(ActionEvent event) {
-		System.exit(0);
+		selection.quitter();
 	}
 
 }

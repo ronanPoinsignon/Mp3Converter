@@ -20,6 +20,7 @@ import event.action.ActionEventSave;
 import event.mouse.MouseEventAjout;
 import event.mouse.MouseEventConversion;
 import event.mouse.MouseEventSuppression;
+import event.window.WindowEventQuitter;
 import exception.PasDeResultatException;
 import fichier.FileManager;
 import javafx.concurrent.WorkerStateEvent;
@@ -153,12 +154,14 @@ public class Selection extends BorderPane {
 		itemLoadReset.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
 		
 		itemQuitter.setOnAction(new ActionEventQuitter(this));
-
+		itemQuitter.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
+		
 		itemActionAnnuler.setOnAction(new ActionEventAnnuler(this));
 		itemActionAnnuler.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
 		
 		itemActionReexecuter.setOnAction(new ActionEventRedo(this));
 		itemActionReexecuter.setAccelerator(KeyCombination.keyCombination("Ctrl+Y"));
+		this.stage.setOnCloseRequest(new WindowEventQuitter(this));
 	}
 	
 	/**
@@ -353,6 +356,15 @@ public class Selection extends BorderPane {
 			
 		}
 		updateActionPossibleGestionnaire();
+	}
+	
+	public void quitter() {
+		if(gestionnaire.canSave()) {
+			if(logger.canQuit())
+				System.exit(0);
+		}
+		else
+			System.exit(0);
 	}
 	
 	/**
