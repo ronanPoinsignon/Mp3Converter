@@ -18,10 +18,13 @@ public class Gestionnaire {
 			gestionnaire = new Gestionnaire();
 		return gestionnaire;
 	}
+	
 	private ArrayList<Commande> listeCommandes = new ArrayList<Commande>();
 	private ArrayList<Commande> listeCommandesEffectuees = new ArrayList<Commande>();
 	private ArrayList<Commande> listeCommandesAnnulees = new ArrayList<Commande>();
 	private ArrayList<Commande> listeCommandesAReexecuteer = new ArrayList<Commande>();
+	
+	private int cptAction = 0;
 	
 	private Gestionnaire() {
 		
@@ -43,6 +46,7 @@ public class Gestionnaire {
 		commande.execute();
 		listeCommandesEffectuees.add(commande);
 		listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
+		cptAction++;
 	}
 	
 	/**
@@ -53,6 +57,7 @@ public class Gestionnaire {
 			commande.execute();
 			listeCommandesEffectuees.add(commande);
 			listeCommandes.remove(commande);
+			cptAction++;
 		}
 		listeCommandesAReexecuteer.removeAll(listeCommandes);
 	}
@@ -69,6 +74,7 @@ public class Gestionnaire {
 		commande.execute();
 		listeCommandesEffectuees.add(commande);
 		listeCommandesAReexecuteer.removeAll(listeCommandes);
+		cptAction++;
 	}
 	
 	/**
@@ -79,6 +85,7 @@ public class Gestionnaire {
 		commande.annuler();
 		listeCommandesAnnulees.add(commande);
 		listeCommandesAReexecuteer.add(commande);
+		cptAction--;
 	}
 	
 	/**
@@ -88,6 +95,7 @@ public class Gestionnaire {
 		Commande commande = listeCommandesAReexecuteer.remove(listeCommandesAReexecuteer.size() - 1);
 		commande.reexecute();
 		listeCommandesEffectuees.add(commande);
+		cptAction++;
 	}
 	
 	/**
@@ -95,7 +103,7 @@ public class Gestionnaire {
 	 * @return
 	 */
 	public boolean canSave() {
-		return !listeCommandesEffectuees.isEmpty();
+		return cptAction != 0;
 	}
 	
 	/**
