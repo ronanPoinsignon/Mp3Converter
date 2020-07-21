@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
@@ -13,6 +14,7 @@ import com.github.kiulian.downloader.YoutubeException;
 import com.github.kiulian.downloader.model.YoutubeVideo;
 import com.github.kiulian.downloader.model.formats.AudioVideoFormat;
 import com.github.kiulian.downloader.model.formats.Format;
+import com.github.kiulian.downloader.model.quality.VideoQuality;
 
 /**
  * Classe permettant le téléchargement de vidéos Youtube.
@@ -62,8 +64,12 @@ public class Downloader {
 
 		List<AudioVideoFormat> videoWithAudioFormats = video.videoWithAudioFormats();
 		videoWithAudioFormats.forEach(vid -> System.out.println("qualité : " + vid.videoQuality()));
-
-		Format format = videoWithAudioFormats.get(0);
+		
+		Format format = null;
+		if(goodVideo)
+			format = getMaxVideoQuality(videoWithAudioFormats);
+		else
+			format = getMinVideoQuality(videoWithAudioFormats);
 		URL website = new URL(format.url());
 		String titre = title;
 		if(titre == null || titre.isEmpty())
@@ -77,5 +83,49 @@ public class Downloader {
 		return fichierVideo;
 	}
 	
+	public Format getMaxVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) {
+		List<Format> listeFormat = new ArrayList<>();
+		VideoQuality[] tabQuality = VideoQuality.values();
+		for(VideoQuality quality : tabQuality) {
+			if(quality != VideoQuality.unknown && quality != VideoQuality.noVideo) {
+				videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == quality).forEach(listeFormat::add);
+				if(!listeFormat.isEmpty())
+					return listeFormat.get(0);
+			}
+		}
+		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.unknown).forEach(listeFormat::add);
+		if(!listeFormat.isEmpty())
+			return listeFormat.get(0);
+		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.noVideo).forEach(listeFormat::add);
+		if(!listeFormat.isEmpty())
+			return listeFormat.get(0);
+		return null;
+	}
 	
+	public Format getMinVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) {
+		List<Format> listeFormat = new ArrayList<>();
+		VideoQuality[] tabQuality = inverser(VideoQuality.values());
+		for(VideoQuality quality : tabQuality) {
+			if(quality != VideoQuality.unknown && quality != VideoQuality.noVideo) {
+				videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == quality).forEach(listeFormat::add);
+				if(!listeFormat.isEmpty())
+					return listeFormat.get(0);
+			}
+		}
+		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.unknown).forEach(listeFormat::add);
+		if(!listeFormat.isEmpty())
+			return listeFormat.get(0);
+		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.noVideo).forEach(listeFormat::add);
+		if(!listeFormat.isEmpty())
+			return listeFormat.get(0);
+		return null;
+	}
+	
+	public VideoQuality[] inverser(VideoQuality[] tabQuality) {
+		VideoQuality[] tab = new VideoQuality[tabQuality.length];
+		for(int i = tabQuality.length - 1; i >= 0; i--) {
+			tab[tabQuality.length - i - 1] = tabQuality[i];
+		}
+		return tab;
+	}
 }
