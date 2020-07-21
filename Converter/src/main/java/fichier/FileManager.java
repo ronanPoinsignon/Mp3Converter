@@ -68,11 +68,16 @@ public class FileManager {
 	 */
 	public void save(Window window, List<Video> listeVideos) throws IOException {
 		FileChooser chooser = new FileChooser();
+		DirectoryChooser directory = DirectoryChooserManager.getInstance("sauvegarder");
+		chooser.setInitialDirectory(directory.getInitialDirectory());
 		ExtensionFilter extFilter = new FileChooser.ExtensionFilter(DESCRIPTION_TYPE_FICHIER, TYPE_FICHIER);
 		chooser.getExtensionFilters().add(extFilter);
-		File file = chooser.showSaveDialog(window);
+		File file = directory.getInitialDirectory();
+		if(file == null)
+			file = chooser.showSaveDialog(window);
 		if(file == null)
 			return;
+		directory.setInitialDirectory(file);
 		FileOutputStream fos = null;
 		ObjectOutputStream output = null;
 		try {

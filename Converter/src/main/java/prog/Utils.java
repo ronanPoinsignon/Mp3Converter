@@ -15,7 +15,8 @@ import javafx.scene.control.TextInputDialog;
  */
 public class Utils {
 
-	public static final int TIMEOUT = 3000;
+	public static final String DIRECTORY_CHOOSER_SAVE = "sauvegarder";
+	public static final String DIRECTORY_CHOOSER_CONVERTIR = "convertir";
 	
 	/**
 	 * Convertit une Url en une map correspondant aux paramètres de cette Url.

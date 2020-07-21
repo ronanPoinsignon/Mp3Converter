@@ -18,6 +18,7 @@ import event.action.ActionEventLoadReset;
 import event.action.ActionEventQuitter;
 import event.action.ActionEventRedo;
 import event.action.ActionEventSave;
+import event.action.ActionEventSaveSous;
 import event.mouse.MouseEventAjout;
 import event.mouse.MouseEventConversion;
 import event.mouse.MouseEventConversionInstantannee;
@@ -82,6 +83,7 @@ public class Selection extends BorderPane {
 	private Menu menuFichier = new Menu("Fichier");
 	private Menu menuLoad = new Menu("Charger");
 	private MenuItem itemSave = new MenuItem("Sauvegarder");
+	private MenuItem itemSaveSous = new MenuItem("Sauvegarder sous");
 	private MenuItem itemLoadAppend = new MenuItem("Ajouter à la liste");
 	private MenuItem itemLoadReset = new MenuItem("Réinitialiser la liste");
 	private MenuItem itemQuitter = new MenuItem("Quitter");
@@ -109,7 +111,7 @@ public class Selection extends BorderPane {
 		this.boutonConvertir.setMinWidth(TAILLE_BOUTON);
 		
 		menuFichier.getItems().add(itemSave);
-		
+		menuFichier.getItems().add(itemSaveSous);
 		menuLoad.getItems().add(itemLoadAppend);
 		menuLoad.getItems().add(itemLoadReset);
 		menuFichier.getItems().add(menuLoad);
@@ -165,6 +167,8 @@ public class Selection extends BorderPane {
 		itemSave.setOnAction(new ActionEventSave(this));
 		itemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
 
+		itemSaveSous.setOnAction(new ActionEventSaveSous(this));
+		
 		itemLoadAppend.setOnAction(new ActionEventLoadAppend(this));
 		itemLoadAppend.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
 
@@ -228,6 +232,7 @@ public class Selection extends BorderPane {
 	    } else {
 	        logger.showWarningAlertAucuneVideoASupprimer();
 	    }
+	    updateActionPossibleGestionnaire();
 	}
 	
 	/**
@@ -261,8 +266,8 @@ public class Selection extends BorderPane {
 			logger.showWarningAlertAucuneOption();
 			return;
 		}
-		DirectoryChooser directoryChooser = DirectoryChooserManager.getInstance();
-		directoryChooser.setTitle("dossier de sauvegarde");
+		DirectoryChooser directoryChooser = DirectoryChooserManager.getInstance("convertir");
+		directoryChooser.setTitle("dossier de conversion");
 		File directory = directoryChooser.getInitialDirectory();
         if (directory == null) {
         	directory = directoryChooser.showDialog(stage);
@@ -344,7 +349,6 @@ public class Selection extends BorderPane {
 			return;
 		}
 		try {
-			FileManager.getInstance();
 			fileManager.save(stage, table.getItems().stream().collect(Collectors.toList()));
 		}
 		catch(IOException e) {
@@ -424,9 +428,9 @@ public class Selection extends BorderPane {
 			if(logger.canQuit()) {
 				System.exit(0);
 			}
+			return;
 		}
-		else
-			System.exit(0);
+		System.exit(0);
 	}
 	
 	/**
@@ -437,6 +441,7 @@ public class Selection extends BorderPane {
 			this.itemActionAnnuler.setDisable(!gestionnaire.canAnnuler());
 			this.itemActionReexecuter.setDisable(!gestionnaire.canReexecuter());
 			this.itemSave.setDisable(!gestionnaire.canSave());
+			this.itemSaveSous.setDisable(table.getItems().size() == 0);
 			this.menuAction.setDisable(itemActionAnnuler.isDisable() && itemActionReexecuter.isDisable());
 	}
 	
