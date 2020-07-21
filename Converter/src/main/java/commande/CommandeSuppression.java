@@ -3,7 +3,7 @@ package commande;
 import java.util.List;
 
 import affichage.demande.TableVideo;
-import prog.Video;
+import prog.video.Video;
 
 /**
  * Classe permettant la suppression de vidéos de la liste.
@@ -17,19 +17,22 @@ public class CommandeSuppression extends Commande {
 	}
 	
 	@Override
-	public void execute() {
+	public boolean execute() {
 		List<Video> listeVideosNonPresentes = table.removeAll(listeVideos);
 		listeVideos.removeAll(listeVideosNonPresentes);
+		return !listeVideos.isEmpty();
 	}
 
 	@Override
-	public void annuler() {
+	public boolean annuler() {
 		table.addAll(listeVideos);
+		return !listeVideos.isEmpty();
 	}
 
 	@Override
-	public void reexecute() {
+	public boolean reexecute() {
 		table.removeAll(listeVideos);
+		return listeVideos.isEmpty();
 	}
 
 }

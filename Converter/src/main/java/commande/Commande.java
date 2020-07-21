@@ -3,7 +3,7 @@ package commande;
 import java.util.List;
 
 import affichage.demande.TableVideo;
-import prog.Video;
+import prog.video.Video;
 
 /**
  * Classe abstraite permettant d'effectuer des actions sur la liste de vidéos.
@@ -23,15 +23,15 @@ public abstract class Commande {
 	/**
 	 * Execute la commande.
 	 */
-	public abstract void execute();
+	public abstract boolean execute();
 	
 	/**
 	 * Annule l'exécution/
 	 */
-	public abstract void annuler();
+	public abstract boolean annuler();
 	
 	/**
 	 * Réexécute la commande après annulation de celle-ci.
 	 */
-	public abstract void reexecute();
+	public abstract boolean reexecute();
 }

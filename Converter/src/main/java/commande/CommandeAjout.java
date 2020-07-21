@@ -4,7 +4,7 @@ import java.util.List;
 
 import affichage.demande.TableVideo;
 import log.Logger;
-import prog.Video;
+import prog.video.Video;
 
 /**
  * Classe permettant l'ajout de vidéos à la liste.
@@ -18,22 +18,25 @@ public class CommandeAjout extends Commande {
 	}
 
 	@Override
-	public void execute() {
+	public boolean execute() {
 		List<Video> listeVideosDejaPresentes = table.addAll(listeVideos);
 		listeVideos.removeAll(listeVideosDejaPresentes);
 		if(!listeVideosDejaPresentes.isEmpty())
 			Logger.getInstance().showWarningAlertVideosDejaPresentes(listeVideosDejaPresentes);
+		return !listeVideos.isEmpty();
 	}
 
 	@Override
-	public void annuler() {
+	public boolean annuler() {
 		table.removeAll(listeVideos);
+		return !listeVideos.isEmpty();
 	}
 
 	@Override
-	public void reexecute() {
+	public boolean reexecute() {
 		List<Video> listeVideosDejaPresentes = table.addAll(listeVideos);
 		Logger.getInstance().showWarningAlertVideosDejaPresentes(listeVideosDejaPresentes);
+		return !listeVideos.isEmpty();
 	}
 
 }

@@ -1,8 +1,12 @@
 package prog;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+
+import exception.PasDeResultatException;
+import javafx.scene.control.TextInputDialog;
 
 /**
  * Classe Fourre-tout.
@@ -41,6 +45,24 @@ public class Utils {
 			id = url;
 		}
 		return id;
+	}
+	
+	/**
+	 * Affiche une boîte de dialogue pour permettre l'ajout d'une nouvelle vidéos Youtube en donnant le lien de celle-ci.
+	 * @return
+	 * @throws PasDeResultatException
+	 */
+	public static String showInputDIalogAjout() throws PasDeResultatException {
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Sélection");
+		dialog.setHeaderText("Donnez un lien de vidéo");
+		dialog.setContentText("lien : ");
+
+		// Traditional way to get the response value.
+		Optional<String> result = dialog.showAndWait();
+		if(result.isPresent())
+			return result.get();
+		throw new PasDeResultatException();
 	}
 	
 }

@@ -2,6 +2,10 @@ package prog;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
@@ -29,9 +33,14 @@ public class Downloader {
 	 * @throws YoutubeException
 	 * @throws IOException
 	 */
-	public File download(File folder, String url) throws YoutubeException, IOException {
+	public File download(File folder, String url, boolean goodVideo) throws YoutubeException, IOException {
 		String id = Utils.getvideoId(url);
-		return downloadFromId(folder, id);
+		return downloadFromId(folder, id, null, goodVideo);
+	}
+	
+	public File download(File folder, String url, String title, boolean goodVideo) throws YoutubeException, IOException {
+		String id = Utils.getvideoId(url);
+		return downloadFromId(folder, id, title, goodVideo);
 	}
 	
 	/**
@@ -43,7 +52,7 @@ public class Downloader {
 	 * @throws YoutubeException
 	 * @throws IOException
 	 */
-	private File downloadFromId(File folder, String videoId) throws YoutubeException, IOException {
+	private File downloadFromId(File folder, String videoId, String title, boolean goodVideo) throws YoutubeException, IOException {
 		YoutubeDownloader downloader = new YoutubeDownloader();
 		downloader.addCipherFunctionPattern(2, "\\b([a-zA-Z0-9$]{2})\\s*=\\s*function\\(\\s*a\\s*\\)\\s*\\{\\s*a\\s*=\\s*a\\.split\\(\\s*\"\"\\s*\\)");
 		downloader.setParserRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
@@ -52,10 +61,20 @@ public class Downloader {
 		YoutubeVideo video = downloader.getVideo(videoId);
 
 		List<AudioVideoFormat> videoWithAudioFormats = video.videoWithAudioFormats();
+		videoWithAudioFormats.forEach(vid -> System.out.println("qualité : " + vid.videoQuality()));
 
 		Format format = videoWithAudioFormats.get(0);
-
-		return video.download(format, folder);
+		URL website = new URL(format.url());
+		String titre = title;
+		if(titre == null || titre.isEmpty())
+			titre = video.details().title();
+		if(!folder.exists())
+			folder.mkdirs();
+		File fichierVideo = new File(folder.getPath() + "\\" + titre + ".mp4");
+		try (InputStream in = website.openStream()) {
+		    Files.copy(in, fichierVideo.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+		return fichierVideo;
 	}
 	
 	

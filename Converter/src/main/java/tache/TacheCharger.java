@@ -7,22 +7,26 @@ import java.util.List;
 import com.github.kiulian.downloader.YoutubeException;
 import com.github.kiulian.downloader.YoutubeException.BadPageException;
 
-import javafx.concurrent.Task;
-import prog.Video;
+import prog.video.Video;
+import prog.video.VideoYtb;
 
 /**
  * Classe permettant de charger une ou plusieurs vidéos dans la liste de vidéo.
  * @author ronan
  *
  */
-public class TacheCharger extends Task<List<Video>>{
+public class TacheCharger extends Tache<List<Video>>{
 
-	private List<String> listeUrls;
+	private List<String> listeUrls = new ArrayList<>();
 
 	private ArrayList<String> listeUrlsMauvaisLien = new ArrayList<>(), listeUrlsErreur = new ArrayList<>();
 	
 	public TacheCharger(List<String> listeUrls) {
 		this.listeUrls = listeUrls;
+	}
+	
+	public TacheCharger(String url) {
+		listeUrls.add(url);
 	}
 	
 	@Override
@@ -34,11 +38,13 @@ public class TacheCharger extends Task<List<Video>>{
 		for(String url : listeUrls) {
 			try {
 				this.updateMessage("chargement de " + url);
-				listeVideos.add(new Video(url));
+				listeVideos.add(new VideoYtb(url));
 			} catch(BadPageException e) {
 				listeUrlsMauvaisLien.add(url);
+				e.printStackTrace();
 			} catch (YoutubeException | IOException e) {
 				listeUrlsErreur.add(url);
+				e.printStackTrace();
 			}
 			this.updateProgress(++cpt, tailleListe);
 		}

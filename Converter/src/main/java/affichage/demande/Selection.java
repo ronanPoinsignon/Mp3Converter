@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.github.kiulian.downloader.YoutubeException;
 
 import commande.CommandeAjout;
 import commande.CommandeReset;
@@ -19,13 +20,15 @@ import event.action.ActionEventRedo;
 import event.action.ActionEventSave;
 import event.mouse.MouseEventAjout;
 import event.mouse.MouseEventConversion;
+import event.mouse.MouseEventConversionInstantannee;
 import event.mouse.MouseEventSuppression;
 import event.window.WindowEventQuitter;
-import exception.PasDeResultatException;
+import fichier.DirectoryChooserManager;
 import fichier.FileManager;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -35,7 +38,6 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
@@ -43,9 +45,11 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import log.Logger;
-import prog.Video;
+import prog.Downloader;
+import prog.video.Video;
 import tache.TacheCharger;
-import tache.TacheConvertir;
+import tache.TacheConvertirToFile;
+import tache.TacheConvertirUrlToVideo;
 
 /**
  * Classe gérant les éléments affichés.
@@ -66,14 +70,17 @@ public class Selection extends BorderPane {
 	private TableVideo table = new TableVideo();
 	private Button boutonAjout = new Button("Ajouter"),
 			boutonSuppression = new Button("Supprimer"),
-			boutonConvertir = new Button("Convertir");
+			boutonConvertir = new Button("Convertir"),
+			boutonConvertirUne = new Button("Convertir Une");
+	private CheckBox checkBoxMp3 = new CheckBox("Mp3"),
+			checkBoxMp4 = new CheckBox("Mp4");
 	private ChoiceBox<String> menuBitRate = new ChoiceBox<>();
 	
 	private MenuBar menuBar = new MenuBar();
 	
 	private Menu menuFichier = new Menu("Fichier");
-	private Menu menuLoad = new Menu("Load");
-	private MenuItem itemSave = new MenuItem("Save");
+	private Menu menuLoad = new Menu("Charger");
+	private MenuItem itemSave = new MenuItem("Sauvegarder");
 	private MenuItem itemLoadAppend = new MenuItem("Ajouter à la liste");
 	private MenuItem itemLoadReset = new MenuItem("Réinitialiser la liste");
 	private MenuItem itemQuitter = new MenuItem("Quitter");
@@ -86,6 +93,16 @@ public class Selection extends BorderPane {
 	
 	public Selection(Stage stage) {
 		this.stage = stage;
+		addTable();
+		createPane();
+		addEvent();
+		updateActionPossibleGestionnaire();
+	}
+	
+	/**
+	 * Place les éléments.
+	 */
+	protected void createPane() {
 		this.boutonAjout.setMinWidth(TAILLE_BOUTON);
 		this.boutonSuppression.setMinWidth(TAILLE_BOUTON);
 		this.boutonConvertir.setMinWidth(TAILLE_BOUTON);
@@ -108,22 +125,15 @@ public class Selection extends BorderPane {
 		menuBitRate.getItems().add("192kb/s");
 		menuBitRate.getItems().add("320kb/s");
 		menuBitRate.getSelectionModel().select(1);
-		addTable();
-		createPane();
-		addEvent();
-		updateActionPossibleGestionnaire();
-	}
-	
-	/**
-	 * Place les éléments.
-	 */
-	protected void createPane() {		
+		
 		GridPane gridBouton = new GridPane();
 		gridBouton.add(menuBitRate, 0, 0);
 		gridBouton.add(boutonAjout, 0, 1);
 		gridBouton.add(boutonSuppression, 0, 2);
 		gridBouton.add(boutonConvertir, 0, 3);
-		
+		gridBouton.add(checkBoxMp3, 0, 4);
+		gridBouton.add(checkBoxMp4, 0, 5);
+		gridBouton.add(boutonConvertirUne, 0, 6);
 		GridPane gridTotal = new GridPane();
 		gridTotal.add(table, 0, 0);
 		gridTotal.add(gridBouton, 1, 0);
@@ -131,9 +141,13 @@ public class Selection extends BorderPane {
 		GridPane gridProgression = new GridPane();
 		gridProgression.add(indicateur, 0, 0);
 		gridProgression.add(labelIndicateur, 1, 0);
+		
+		checkBoxMp3.setSelected(true);
+
 		this.setTop(menuBar);
 		this.setCenter(gridTotal);
 		this.setBottom(gridProgression);
+		boutonConvertirUne.setDisable(true);
 	}
 	
 	/**
@@ -143,6 +157,7 @@ public class Selection extends BorderPane {
 		boutonAjout.setOnMouseClicked(new MouseEventAjout(this));
 		boutonSuppression.setOnMouseClicked(new MouseEventSuppression(this));
 		boutonConvertir.setOnMouseClicked(new MouseEventConversion(this));
+		boutonConvertirUne.setOnMouseClicked(new MouseEventConversionInstantannee(this));
 		
 		itemSave.setOnAction(new ActionEventSave(this));
 		itemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
@@ -161,6 +176,7 @@ public class Selection extends BorderPane {
 		
 		itemActionReexecuter.setOnAction(new ActionEventRedo(this));
 		itemActionReexecuter.setAccelerator(KeyCombination.keyCombination("Ctrl+Y"));
+		
 		this.stage.setOnCloseRequest(new WindowEventQuitter(this));
 	}
 	
@@ -168,10 +184,14 @@ public class Selection extends BorderPane {
 	 * Ajoute une vidéos à la table. Modifie l'affichage en conséquence.
 	 * @param url
 	 */
-	public void addLineToTable(String url) {
+	public void addVideoToTable(String url) {
 		ArrayList<String> listeUrls = new ArrayList<>();
 		listeUrls.add(url);
 		TacheCharger tache = new TacheCharger(listeUrls);
+		labelIndicateur.textProperty().unbind();
+		labelIndicateur.textProperty().bind(tache.messageProperty());
+		indicateur.progressProperty().unbind();
+		indicateur.progressProperty().bind(tache.progressProperty());
 		tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED,
                 new EventHandler<WorkerStateEvent>() {
 			 
@@ -189,10 +209,6 @@ public class Selection extends BorderPane {
     			updateActionPossibleGestionnaire();
             }
         });
-		labelIndicateur.textProperty().unbind();
-		labelIndicateur.textProperty().bind(tache.messageProperty());
-		indicateur.progressProperty().unbind();
-		indicateur.progressProperty().bind(tache.progressProperty());
 		new Thread(tache).start();
 	}
 	
@@ -222,41 +238,27 @@ public class Selection extends BorderPane {
 		colonneTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
 		colonneTitre.widthProperty().multiply(0.4);
 		
-		TableColumn<Video, String> colonneId = new TableColumn<>("Id");
-		colonneId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		colonneId.widthProperty().multiply(0.6);
-		colonneId.setSortable(false);
+		TableColumn<Video, String> colonneLien = new TableColumn<>("Lien");
+		colonneLien.setCellValueFactory(new PropertyValueFactory<>("lien"));
+		colonneLien.widthProperty().multiply(0.6);
+		colonneLien.setSortable(false);
 		table.getColumns().add(colonneTitre);
-		table.getColumns().add(colonneId);
+		table.getColumns().add(colonneLien);
 	}
 	
 	/**
-	 * Affiche une boîte de dialogue pour permettre l'ajout d'une nouvelle vidéos Youtube en donnant le lien de celle-ci.
-	 * @return
-	 * @throws PasDeResultatException
+	 * Convertit la liste de vidéos en fichier mp3 ou mp4.
 	 */
-	public String showInputDIalogAjout() throws PasDeResultatException {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Sélection");
-		dialog.setHeaderText("Donnez un lien de vidéo");
-		dialog.setContentText("lien : ");
-
-		// Traditional way to get the response value.
-		Optional<String> result = dialog.showAndWait();
-		if(result.isPresent())
-			return result.get();
-		throw new PasDeResultatException();
-	}
-	
-	/**
-	 * Convertit la liste de vidéos en fichier mp3.
-	 */
-	public void convertir() {
+	public void convertirListe() {
 		if(table.getItems().isEmpty()) {
 			logger.showWarningAlertConvertisseurVide();
 			return;
 		}
-		DirectoryChooser directoryChooser = new DirectoryChooser();
+		if(!checkBoxMp3.isSelected() && !checkBoxMp4.isSelected()) {
+			logger.showWarningAlertAucuneOption();
+			return;
+		}
+		DirectoryChooser directoryChooser = DirectoryChooserManager.getInstance();
 		directoryChooser.setTitle("dossier de sauvegarde");
 		File directory = directoryChooser.getInitialDirectory();
         if (directory == null) {
@@ -266,13 +268,16 @@ public class Selection extends BorderPane {
 			return;
 		directoryChooser.setInitialDirectory(directory);
 		int bitRate = Integer.parseInt(menuBitRate.getSelectionModel().getSelectedItem().substring(0, 3))*1000;
-		TacheConvertir tache = new TacheConvertir(table, directory, bitRate);
+		List<String> listeExtensions = new ArrayList<>();
+		if(checkBoxMp3.isSelected())
+			listeExtensions.add("mp3");
+		if(checkBoxMp4.isSelected())
+			listeExtensions.add("mp4");
+		TacheConvertirToFile tache = new TacheConvertirToFile(table.getItems(), directory, bitRate, listeExtensions);
 
 		TableViewSelectionModel<Video> defaultSelectionModel = table.getSelectionModel();
-		boutonAjout.setDisable(true);
-		boutonSuppression.setDisable(true);
-		boutonConvertir.setDisable(true);
-		table.setSelectionModel(null);
+		updateActionsBoutonPossibles(true, null);
+		final File directoryFinal = directory;
 		tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED,
                 new EventHandler<WorkerStateEvent>() {
 			 
@@ -283,11 +288,14 @@ public class Selection extends BorderPane {
                 	return;
                 labelIndicateur.textProperty().unbind();
                 labelIndicateur.setText("téléchargé(s) : " + downloaded.size());
+                for(File fichier : downloaded)
+                	fichier.delete();
+                if(directoryFinal.listFiles().length == 0)
+                	directoryFinal.delete();
                 table.removeAll();
-        		table.setSelectionModel(defaultSelectionModel);
-        		boutonAjout.setDisable(false);
-        		boutonSuppression.setDisable(false);
-        		boutonConvertir.setDisable(false);
+        		updateActionsBoutonPossibles(false, defaultSelectionModel);
+        		gestionnaire.clean();
+        		updateActionPossibleGestionnaire();
             }
         });
 		new Thread(tache).start();
@@ -296,6 +304,42 @@ public class Selection extends BorderPane {
 		labelIndicateur.textProperty().bind(tache.messageProperty());
 	}
 	
+	/**
+	 * Convertit une vidéo depuis une Url donnée.
+	 * @param url
+	 */
+	public void convertirFromUrl(String url) {
+		TacheConvertirUrlToVideo tacheVideo = new TacheConvertirUrlToVideo(url);
+		TableViewSelectionModel<Video> defaultSelectionModel = table.getSelectionModel();
+		labelIndicateur.textProperty().unbind();
+		labelIndicateur.textProperty().bind(tacheVideo.messageProperty());
+		indicateur.progressProperty().unbind();
+		indicateur.progressProperty().bind(tacheVideo.progressProperty());
+		tacheVideo.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED,
+                new EventHandler<WorkerStateEvent>() {
+			 
+            @Override
+            public void handle(WorkerStateEvent t) {
+                Video video = tacheVideo.getValue();
+                if(video == null)
+                	return;
+                labelIndicateur.textProperty().unbind();
+                labelIndicateur.setText("téléchargé(s) : " + video.getTitre());
+        		updateActionsBoutonPossibles(false, defaultSelectionModel);
+        		Downloader downloader = new Downloader();
+        		try {
+					downloader.download(FileManager.getInstance().getFolder(stage), url, false);
+				} catch (YoutubeException | IOException e) {
+					e.printStackTrace();
+				}
+            }
+        });
+		new Thread(tacheVideo).start();
+	}
+	
+	/**
+	 * Sauvegarde la liste de vidéos en demandant à l'utilisateur l'emplacement et le nom du fichier de sauvegarde.
+	 */
 	public void sauvegarder() {
 		if(table.getItems().isEmpty()) {
 			logger.showWarningAlertNoFileToSave();
@@ -310,6 +354,11 @@ public class Selection extends BorderPane {
 		}
 	}
 	
+	/**
+	 * Demande à l'utilisateur de charger un fichier de sauvegarde puis 
+	 * charge la liste de vidéos correspondant à ce fichier en ajoutant 
+	 * ces vidéos à la liste déjà présente.
+	 */
 	public void loadAppend() {
 		List<Video> listeVideos = null;
 		try {
@@ -324,6 +373,10 @@ public class Selection extends BorderPane {
 		updateActionPossibleGestionnaire();
 	}
 	
+	/**
+	 * Demande à l'utilisateur de charger un fichier de sauvegarde puis 
+	 * supprime la liste déjà présente pour charger la nouvelle liste.
+	 */
 	public void loadReset() {
 		List<Video> listeVideos = null;
 		try {
@@ -338,6 +391,9 @@ public class Selection extends BorderPane {
 		updateActionPossibleGestionnaire();
 	}
 	
+	/**
+	 * Annule la dernière action faite par l'utilisateur.
+	 */
 	public void annuler() {
 		try {
 			gestionnaire.annuler();
@@ -348,6 +404,9 @@ public class Selection extends BorderPane {
 		updateActionPossibleGestionnaire();
 	}
 	
+	/**
+	 * Réexécute la dernière action annulée par l'utilisateur.
+	 */
 	public void reexecuter() {
 		try {
 			gestionnaire.reexecuter();
@@ -358,10 +417,15 @@ public class Selection extends BorderPane {
 		updateActionPossibleGestionnaire();
 	}
 	
+	/**
+	 * Quitte l'application en demandant une confirmation si 
+	 * l'utilisateur n'a pas sauvegardé son travail.
+	 */
 	public void quitter() {
 		if(gestionnaire.canSave()) {
-			if(logger.canQuit())
+			if(logger.canQuit()) {
 				System.exit(0);
+			}
 		}
 		else
 			System.exit(0);
@@ -376,6 +440,18 @@ public class Selection extends BorderPane {
 			this.itemActionReexecuter.setDisable(!gestionnaire.canReexecuter());
 			this.itemSave.setDisable(!gestionnaire.canSave());
 			this.menuAction.setDisable(itemActionAnnuler.isDisable() && itemActionReexecuter.isDisable());
+	}
+	
+	/**
+	 * Met à jour les boutons de l'interface ainsi que la liste pour empêcher ou non l'utilisateur d'effectuer une action.
+	 * @param isDisabled
+	 * @param model
+	 */
+	public void updateActionsBoutonPossibles(boolean isDisabled, TableViewSelectionModel<Video> model) {
+		boutonAjout.setDisable(isDisabled);
+		boutonSuppression.setDisable(isDisabled);
+		boutonConvertir.setDisable(isDisabled);
+		table.setSelectionModel(model);
 	}
 	
 }

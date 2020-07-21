@@ -13,7 +13,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
-import prog.Video;
+import prog.video.Video;
 
 /**
  * Classe permettant de pouvoir sauvegarder et charger des fichiers. 

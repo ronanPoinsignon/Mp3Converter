@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import prog.Video;
+import prog.video.Video;
 
 /**
  * Classe de log permettant l'affichage d' {@link Alert} d'erreur ou de mauvaise manipulations.
@@ -91,6 +91,15 @@ public class Logger {
 		alert.setTitle("Rien à convertir");
 		alert.setHeaderText("Aucune vidéo ne peut être convertie");
 		alert.setContentText("Veuillez ajouter au moins une vidéo à la liste pour effectuer cette action");
+
+		alert.showAndWait();
+	}
+	
+	public void showWarningAlertAucuneOption() {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setTitle("Pas de type de conversion donné");
+		alert.setHeaderText("Aucun type de conversion n'a été donné");
+		alert.setContentText("Veuillez choisir la conversion voulue");
 
 		alert.showAndWait();
 	}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import affichage.demande.TableVideo;
-import prog.Video;
+import prog.video.Video;
 
 public class CommandeReset extends Commande {
 
@@ -15,21 +15,24 @@ public class CommandeReset extends Commande {
 	}
 
 	@Override
-	public void execute() {
+	public boolean execute() {
 		listeVideosSupprimees = table.removeAll();
 		table.addAll(listeVideos);
+		return !listeVideos.isEmpty();
 	}
 
 	@Override
-	public void annuler() {
+	public boolean annuler() {
 		table.removeAll();
 		table.addAll(listeVideosSupprimees);
+		return !listeVideosSupprimees.isEmpty();
 	}
 
 	@Override
-	public void reexecute() {
+	public boolean reexecute() {
 		table.removeAll();
 		table.addAll(listeVideos);
+		return !listeVideos.isEmpty();
 	}
 
 }

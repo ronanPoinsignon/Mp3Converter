@@ -6,7 +6,7 @@ import java.util.List;
 import exception.VideoDejaPresenteException;
 import exception.VideoNonTrouveeException;
 import javafx.scene.control.TableView;
-import prog.Video;
+import prog.video.Video;
 
 /**
  * Classe gérant la liste de vidéos.
@@ -91,7 +91,6 @@ public class TableVideo extends TableView<Video> {
 		ArrayList<Video> listeVideosASuppr = new ArrayList<>();
 		listeVideosASuppr.addAll(listeVideos);
 		ArrayList<Video> listeVideoNonPresentes = new ArrayList<>();
-		System.out.println("taille liste avant: " + listeVideos.size());
 		for(Video video : listeVideosASuppr) {
 			try {
 				this.remove(video);
@@ -99,7 +98,6 @@ public class TableVideo extends TableView<Video> {
 				listeVideoNonPresentes.add(video);
 			}
 		}
-		System.out.println("taille apres : " + listeVideos.size());
 		return listeVideoNonPresentes;
 	}
 }

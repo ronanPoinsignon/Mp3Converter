@@ -43,10 +43,11 @@ public class Gestionnaire {
 	 */
 	public void executer() {
 		Commande commande = listeCommandes.remove(0);
-		commande.execute();
-		listeCommandesEffectuees.add(commande);
-		listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
-		cptAction++;
+		if(commande.execute()) {
+			listeCommandesEffectuees.add(commande);
+			listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
+			cptAction++;
+		}
 	}
 	
 	/**
@@ -54,10 +55,11 @@ public class Gestionnaire {
 	 */
 	public void executerAll() {
 		for(Commande commande : listeCommandes) {
-			commande.execute();
-			listeCommandesEffectuees.add(commande);
-			listeCommandes.remove(commande);
-			cptAction++;
+			if(commande.execute()) {
+				listeCommandesEffectuees.add(commande);
+				listeCommandes.remove(commande);
+				cptAction++;
+			}
 		}
 		listeCommandesAReexecuteer.removeAll(listeCommandes);
 	}
@@ -71,10 +73,15 @@ public class Gestionnaire {
 	public void executer(Commande commande) throws CommandeNonTrouveeException {
 		if(!listeCommandes.remove(commande))
 			throw new CommandeNonTrouveeException();
+		if(commande.execute()) {
+			listeCommandesEffectuees.add(commande);
+			listeCommandesAReexecuteer.removeAll(listeCommandes);
+			cptAction++;
+		}
+	}
+	
+	public void executerInstant(Commande commande) {
 		commande.execute();
-		listeCommandesEffectuees.add(commande);
-		listeCommandesAReexecuteer.removeAll(listeCommandes);
-		cptAction++;
 	}
 	
 	/**
@@ -82,10 +89,11 @@ public class Gestionnaire {
 	 */
 	public void annuler() {
 		Commande commande = listeCommandesEffectuees.remove(listeCommandesEffectuees.size() - 1);
-		commande.annuler();
-		listeCommandesAnnulees.add(commande);
-		listeCommandesAReexecuteer.add(commande);
-		cptAction--;
+		if(commande.annuler()) {
+			listeCommandesAnnulees.add(commande);
+			listeCommandesAReexecuteer.add(commande);
+			cptAction--;
+		}
 	}
 	
 	/**
@@ -93,9 +101,10 @@ public class Gestionnaire {
 	 */
 	public void reexecuter() {
 		Commande commande = listeCommandesAReexecuteer.remove(listeCommandesAReexecuteer.size() - 1);
-		commande.reexecute();
-		listeCommandesEffectuees.add(commande);
-		cptAction++;
+		if(commande.reexecute()) {
+			listeCommandesEffectuees.add(commande);
+			cptAction++;
+		}
 	}
 	
 	/**
@@ -120,5 +129,12 @@ public class Gestionnaire {
 	 */
 	public boolean canReexecuter() {
 		return !listeCommandesAReexecuteer.isEmpty();
+	}
+	
+	public void clean() {
+		listeCommandes.removeAll(listeCommandes);
+		listeCommandesAnnulees.removeAll(listeCommandesAnnulees);
+		listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
+		listeCommandesEffectuees.removeAll(listeCommandesEffectuees);
 	}
 }

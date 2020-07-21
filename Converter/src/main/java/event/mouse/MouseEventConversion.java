@@ -16,7 +16,7 @@ public class MouseEventConversion extends MouseEventHandler {
 
 	@Override
 	public void handle(MouseEvent event) {
-		selection.convertir();
+		selection.convertirListe();
 	}
 
 }
