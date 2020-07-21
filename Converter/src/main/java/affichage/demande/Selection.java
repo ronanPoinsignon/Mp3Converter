@@ -27,6 +27,7 @@ import fichier.DirectoryChooserManager;
 import fichier.FileManager;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -147,6 +148,8 @@ public class Selection extends BorderPane {
 		this.setTop(menuBar);
 		this.setCenter(gridTotal);
 		this.setBottom(gridProgression);
+		labelIndicateur.setPadding(new Insets(0,0,0,30));
+		gridProgression.setPadding(new Insets(10,0,0,10));
 		boutonConvertirUne.setDisable(true);
 	}
 	

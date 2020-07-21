@@ -24,19 +24,6 @@ public abstract class Convertisseur {
 	
 	public abstract File convertir(File input, File output) throws Exception;
 	
-	protected File convertirToMusique(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
-		EncodingAttributes attrs = new EncodingAttributes(); 
-		AudioAttributes audio = new AudioAttributes(); 
-		audio.setCodec("libmp3lame");
-		audio.setBitRate(audioBitRate);
-		audio.setChannels(2);
-		attrs.setAudioAttributes(audio); 
-		Encoder encoder = new Encoder();  
-		MultimediaObject multimediaObject = new MultimediaObject(input);
-		encoder.encode(multimediaObject, output, attrs);
-		return output;
-	}
-	
 	protected File convertirToVideoSansSon(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
 		EncodingAttributes attrs = new EncodingAttributes();
 		VideoAttributes video = new VideoAttributes(); 
