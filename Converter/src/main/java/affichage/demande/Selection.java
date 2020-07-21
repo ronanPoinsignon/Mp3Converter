@@ -280,7 +280,6 @@ public class Selection extends BorderPane {
 
 		TableViewSelectionModel<Video> defaultSelectionModel = table.getSelectionModel();
 		updateActionsBoutonPossibles(true, null);
-		final File directoryFinal = directory;
 		tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED,
                 new EventHandler<WorkerStateEvent>() {
 			 
@@ -291,10 +290,6 @@ public class Selection extends BorderPane {
                 	return;
                 labelIndicateur.textProperty().unbind();
                 labelIndicateur.setText("téléchargé(s) : " + downloaded.size());
-                for(File fichier : downloaded)
-                	fichier.delete();
-                if(directoryFinal.listFiles().length == 0)
-                	directoryFinal.delete();
                 table.removeAll();
         		updateActionsBoutonPossibles(false, defaultSelectionModel);
         		gestionnaire.clean();

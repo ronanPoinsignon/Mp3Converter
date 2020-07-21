@@ -1,7 +1,13 @@
 package tache;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import it.sauronsoftware.jave.EncoderException;
@@ -33,17 +39,24 @@ public class TacheConvertirToFile extends Task<List<File>> {
 	
 	@Override
 	protected List<File> call() throws Exception {
-		ArrayList<File> listeFichiers = new ArrayList<>();
+		ArrayList<File> listeFichiers = new ArrayList<>(), listeMp4 = new ArrayList<>();
 		if(folder == null)
 			return listeFichiers;
 		if(listeExtensions.isEmpty())
 			return listeFichiers;
 		Convertisseur convertisseur = null;
-		File folderMp4 = new File(folder + "\\mp4");
+		boolean hasMp4 = listeExtensions.contains("mp4");
+		File folderMp4 = null;
+		if(hasMp4)
+			folderMp4 = new File(folder.getPath() + "\\mp4");
+		else {
+			folderMp4 = new File(folder.getPath() + "\\mp4H");
+			folderMp4.mkdirs();
+			Files.setAttribute(Paths.get(folderMp4.getPath()), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+		}
 		int tailleListe = listeVideos.size();
 		int cpt = 0;
 		File fichier = null, fichierMp4 = null;
-		boolean hasMp4 = listeExtensions.contains("mp4");
 		if(hasMp4)
 			listeExtensions.remove("mp4");
 		for(Video video : listeVideos) {
@@ -53,6 +66,7 @@ public class TacheConvertirToFile extends Task<List<File>> {
 			}
 			else
 				fichierMp4 = video.convertToMp4(folderMp4);
+			listeMp4.add(fichierMp4);
 			try {
 				for(String extension : listeExtensions) {
 					File folderVideo = new File(folder + "\\" + extension.toLowerCase());
@@ -73,8 +87,9 @@ public class TacheConvertirToFile extends Task<List<File>> {
 				Logger.getInstance().showErrorAlert(e);
 			}
 			this.updateProgress(++cpt, tailleListe);
-			if(folderMp4.exists() && folderMp4.list().length == 0)
-				folderMp4.delete();
+		}
+		if(!hasMp4) {
+			deleteFile(folderMp4);
 		}
 		return listeFichiers;
 	}
@@ -87,5 +102,12 @@ public class TacheConvertirToFile extends Task<List<File>> {
 	private void update(Video video) throws Exception {
         this.updateMessage("en téléchargement : " + video.getTitre());
     }
+	
+	private void deleteFile(File folder) throws IOException {
+		Files.walk(folder.toPath())
+			.sorted(Comparator.reverseOrder())
+			.map(Path::toFile)
+			.forEach(File::delete);
+	}
 
 }
