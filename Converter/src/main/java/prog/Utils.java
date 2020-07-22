@@ -1,9 +1,8 @@
 package prog;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
 
 import exception.PasDeResultatException;
 import javafx.scene.control.TextInputDialog;
@@ -23,15 +22,17 @@ public class Utils {
 	 * @param query
 	 * @return
 	 */
-	public static HashMap<String, String> getQueryMap(String query) {
-		HashMap<String, String> urlMap = new HashMap<String, String>();
-		if(query == null)
-			return urlMap;
-        String queryString = StringUtils.substringAfter(query,"?");
-        for(String param : queryString.split("&")){
-            urlMap.put(StringUtils.substringBefore(param, "="),StringUtils.substringAfter(param, "="));
-        }
-        return urlMap;
+	public static Map<String, String> getQueryMap(String query) {
+		Map<String, String> map = new HashMap<String, String>();
+		if(query.split("\\?").length < 2)
+			return map;
+		String[] params = query.split("\\?")[1].split("&");  
+	    for (String param : params) {  
+	        String name = param.split("=")[0];  
+	        String value = param.split("=")[1];  
+	        map.put(name, value);  
+	    }  
+	    return map;  
 	}
 	
 	/**

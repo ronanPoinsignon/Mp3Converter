@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import it.sauronsoftware.jave.EncoderException;
 import javafx.concurrent.Task;
-import log.Logger;
 import prog.convertisseur.Convertisseur;
 import prog.convertisseur.ConvertisseurMusique;
 import prog.convertisseur.ConvertisseurVideo;
@@ -67,25 +65,21 @@ public class TacheConvertirToFile extends Task<List<File>> {
 			else
 				fichierMp4 = video.convertToMp4(folderMp4);
 			listeMp4.add(fichierMp4);
-			try {
-				for(String extension : listeExtensions) {
-					File folderVideo = new File(folder + "\\" + extension.toLowerCase());
-					if(!folderVideo.exists())
-						folderVideo.mkdirs();
-					fichier = new File(folderVideo.getPath() + "\\" + video.getTitre() + "." + extension.toLowerCase());
-					if(extension.equalsIgnoreCase("mp3")) {
-						convertisseur = new ConvertisseurMusique(bitRate);
-					}
-					else
-						convertisseur = new ConvertisseurVideo(extension, bitRate, true);
-					if(!extension.equalsIgnoreCase("mp4")) {
-						convertisseur.convertir(fichierMp4, fichier);
-					}
+			for(String extension : listeExtensions) {
+				File folderVideo = new File(folder + "\\" + extension.toLowerCase());
+				if(!folderVideo.exists())
+					folderVideo.mkdirs();
+				fichier = new File(folderVideo.getPath() + "\\" + video.getTitre() + "." + extension.toLowerCase());
+				if(extension.equalsIgnoreCase("mp3")) {
+					convertisseur = new ConvertisseurMusique(bitRate);
 				}
-				listeFichiers.add(fichier);
-			} catch (IllegalArgumentException | EncoderException e) {
-				Logger.getInstance().showErrorAlert(e);
+				else
+					convertisseur = new ConvertisseurVideo(extension, bitRate, true);
+				if(!extension.equalsIgnoreCase("mp4")) {
+					convertisseur.convertir(fichierMp4, fichier);
+				}
 			}
+			listeFichiers.add(fichier);
 			this.updateProgress(++cpt, tailleListe);
 		}
 		if(!hasMp4) {
