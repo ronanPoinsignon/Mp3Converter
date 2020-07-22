@@ -45,6 +45,8 @@ public class TacheCharger extends Tache<List<Video>>{
 			} catch (YoutubeException | IOException e) {
 				listeUrlsErreur.add(url);
 				e.printStackTrace();
+			} catch(NullPointerException e) {
+				
 			}
 			this.updateProgress(++cpt, tailleListe);
 		}

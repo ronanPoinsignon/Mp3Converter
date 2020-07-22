@@ -25,14 +25,22 @@ public class ClavierEventHandler implements EventHandler<KeyEvent> {
 		if(copier.match(event)) {
 			Clipboard clipboard = Clipboard.getSystemClipboard();
 			ClipboardContent content = new ClipboardContent();
-			content.putString(selection.getSelectedLink());
-			clipboard.setContent(content);
+			try {
+				content.putString(selection.getSelectedLink());
+				clipboard.setContent(content);				
+			}
+			catch(ArrayIndexOutOfBoundsException e) {
+				
+			}
 			return;
 		}
 		
 		if(coller.match(event)) {
 			Clipboard clipboard = Clipboard.getSystemClipboard();
-			selection.addVideoToTable(clipboard.getString());
+			String str = clipboard.getString();
+			if(str != null && !str.isEmpty())
+				selection.addVideoToTable(clipboard.getString());
+			return;
 		}
 	}
 

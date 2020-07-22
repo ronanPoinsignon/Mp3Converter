@@ -38,12 +38,10 @@ public abstract class Tache<T> extends Task<T> {
 	}
 	
 	private void fireUpdateEvent(EventTacheUpdated event) {
-		System.out.println("fire");
 		Platform.runLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				System.out.println("classe : " + Thread.currentThread().getClass());
 				Tache.this.fireEvent(event);
 			}
 		});
