@@ -19,6 +19,7 @@ import event.action.ActionEventQuitter;
 import event.action.ActionEventRedo;
 import event.action.ActionEventSave;
 import event.action.ActionEventSaveSous;
+import event.clavier.ClavierEventHandler;
 import event.mouse.MouseEventAjout;
 import event.mouse.MouseEventConversion;
 import event.mouse.MouseEventConversionInstantannee;
@@ -42,6 +43,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
@@ -159,6 +161,7 @@ public class Selection extends BorderPane {
 	 * Ajoute les événements aux différents boutons.
 	 */
 	protected void addEvent() {
+		this.addEventHandler(KeyEvent.KEY_PRESSED, new ClavierEventHandler(this));
 		boutonAjout.setOnMouseClicked(new MouseEventAjout(this));
 		boutonSuppression.setOnMouseClicked(new MouseEventSuppression(this));
 		boutonConvertir.setOnMouseClicked(new MouseEventConversion(this));
@@ -455,6 +458,11 @@ public class Selection extends BorderPane {
 		boutonSuppression.setDisable(isDisabled);
 		boutonConvertir.setDisable(isDisabled);
 		table.setSelectionModel(model);
+	}
+	
+	public String getSelectedLink() {
+		int index = table.getSelectionModel().getSelectedIndex();
+		return table.getItems().get(index).getLien();
 	}
 	
 }
