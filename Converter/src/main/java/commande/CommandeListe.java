@@ -14,22 +14,4 @@ public abstract class CommandeListe extends Commande {
 		this.listeVideos = listeVideos;
 	}
 
-	@Override
-	public boolean execute() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean annuler() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean reexecute() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }
