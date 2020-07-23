@@ -5,7 +5,7 @@ import java.util.List;
 import affichage.demande.TableVideo;
 import prog.video.Video;
 
-public class CommandeListe extends Commande {
+public abstract class CommandeListe extends Commande {
 
 	protected List<Video> listeVideos;
 
