@@ -38,8 +38,10 @@ public class ClavierEventHandler implements EventHandler<KeyEvent> {
 	
 	@Override
 	public void handle(KeyEvent event) {
-		if(event.getCode().equals(KeyCode.ALT))
+		if(event.getCode().equals(KeyCode.ALT)) {
 			event.consume();
+			return;
+		}
 		
 		if(copier.match(event)) {
 			copier();
