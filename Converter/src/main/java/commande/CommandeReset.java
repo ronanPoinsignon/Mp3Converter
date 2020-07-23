@@ -6,7 +6,7 @@ import java.util.List;
 import affichage.demande.TableVideo;
 import prog.video.Video;
 
-public class CommandeReset extends Commande {
+public class CommandeReset extends CommandeListe {
 
 	List<Video> listeVideosSupprimees = new ArrayList<>();
 	

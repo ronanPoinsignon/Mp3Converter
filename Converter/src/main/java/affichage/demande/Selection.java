@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.github.kiulian.downloader.YoutubeException;
 
 import commande.CommandeAjout;
+import commande.CommandeInversion;
 import commande.CommandeReset;
 import commande.CommandeSuppression;
 import commande.Gestionnaire;
@@ -353,6 +354,7 @@ public class Selection extends BorderPane {
 		}
 		try {
 			fileManager.save(stage, table.getItems().stream().collect(Collectors.toList()));
+			updateActionPossibleGestionnaire();
 		}
 		catch(IOException e) {
 			logger.showErrorAlert(e);
@@ -463,6 +465,16 @@ public class Selection extends BorderPane {
 	public String getSelectedLink() {
 		int index = table.getSelectionModel().getSelectedIndex();
 		return table.getItems().get(index).getLien();
+	}
+	
+	public void swapUp() {
+		int index = table.getSelectionModel().getSelectedIndex();
+		Gestionnaire.getInstance().addCommande(new CommandeInversion(table, index, index - 1)).executer();
+	}
+	
+	public void swapDown() {
+		int index = table.getSelectionModel().getSelectedIndex();
+		Gestionnaire.getInstance().addCommande(new CommandeInversion(table, index, index + 1)).executer();
 	}
 	
 }

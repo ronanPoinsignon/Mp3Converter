@@ -24,7 +24,7 @@ public class Gestionnaire {
 	private ArrayList<Commande> listeCommandesAnnulees = new ArrayList<Commande>();
 	private ArrayList<Commande> listeCommandesAReexecuteer = new ArrayList<Commande>();
 	
-	private int cptAction = 0;
+	private int cptActions = 0;
 	
 	private Gestionnaire() {
 		
@@ -34,34 +34,37 @@ public class Gestionnaire {
 	 * Ajoute une commande à la liste des commandes devant être effectuées.
 	 * @param commande
 	 */
-	public void addCommande(Commande commande) {
+	public Gestionnaire addCommande(Commande commande) {
 		listeCommandes.add(commande);
+		return this;
 	}
 	
 	/**
 	 * Exécute la prochaine commande de la liste des commandes à faire.
 	 */
-	public void executer() {
+	public Gestionnaire executer() {
 		Commande commande = listeCommandes.remove(0);
 		if(commande.execute()) {
 			listeCommandesEffectuees.add(commande);
 			listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
-			cptAction++;
+			cptActions++;
 		}
+		return this;
 	}
 	
 	/**
 	 * Exécute toute les commandes de la liste des commandes à faire.
 	 */
-	public void executerAll() {
+	public Gestionnaire executerAll() {
 		for(Commande commande : listeCommandes) {
 			if(commande.execute()) {
 				listeCommandesEffectuees.add(commande);
 				listeCommandes.remove(commande);
-				cptAction++;
+				cptActions++;
 			}
 		}
 		listeCommandesAReexecuteer.removeAll(listeCommandes);
+		return this;
 	}
 	
 	/**
@@ -70,41 +73,55 @@ public class Gestionnaire {
 	 * @param commande
 	 * @throws CommandeNonTrouveeException
 	 */
-	public void executer(Commande commande) throws CommandeNonTrouveeException {
-		if(!listeCommandes.remove(commande))
+	public Gestionnaire executer(Commande commande) throws CommandeNonTrouveeException {
+		if(!listeCommandes.contains(commande))
 			throw new CommandeNonTrouveeException();
 		if(commande.execute()) {
+			commande.execute();
+			listeCommandes.remove(commande);
 			listeCommandesEffectuees.add(commande);
 			listeCommandesAReexecuteer.removeAll(listeCommandes);
-			cptAction++;
+			cptActions++;
 		}
+		return this;
 	}
 	
-	public void executerInstant(Commande commande) {
+	public Gestionnaire executerInstant(Commande commande) {
 		commande.execute();
+		return this;
 	}
 	
 	/**
 	 * Annule la dernière commande effectuée.
 	 */
-	public void annuler() {
+	public Gestionnaire annuler() {
 		Commande commande = listeCommandesEffectuees.remove(listeCommandesEffectuees.size() - 1);
 		if(commande.annuler()) {
 			listeCommandesAnnulees.add(commande);
 			listeCommandesAReexecuteer.add(commande);
-			cptAction--;
+			cptActions--;
 		}
+		return this;
 	}
 	
 	/**
 	 * Réexécute la commande annulée.
 	 */
-	public void reexecuter() {
+	public Gestionnaire reexecuter() {
 		Commande commande = listeCommandesAReexecuteer.remove(listeCommandesAReexecuteer.size() - 1);
 		if(commande.reexecute()) {
 			listeCommandesEffectuees.add(commande);
-			cptAction++;
+			cptActions++;
 		}
+		return this;
+	}
+	
+	public Gestionnaire clean() {
+		listeCommandes.removeAll(listeCommandes);
+		listeCommandesAnnulees.removeAll(listeCommandesAnnulees);
+		listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
+		listeCommandesEffectuees.removeAll(listeCommandesEffectuees);
+		return this;
 	}
 	
 	/**
@@ -112,7 +129,7 @@ public class Gestionnaire {
 	 * @return
 	 */
 	public boolean canSave() {
-		return cptAction != 0;
+		return cptActions != 0;
 	}
 	
 	/**
@@ -131,10 +148,7 @@ public class Gestionnaire {
 		return !listeCommandesAReexecuteer.isEmpty();
 	}
 	
-	public void clean() {
-		listeCommandes.removeAll(listeCommandes);
-		listeCommandesAnnulees.removeAll(listeCommandesAnnulees);
-		listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
-		listeCommandesEffectuees.removeAll(listeCommandesEffectuees);
+	public void notifySave() {
+		cptActions = 0;
 	}
 }

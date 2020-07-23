@@ -3,7 +3,6 @@ package commande;
 import java.util.List;
 
 import affichage.demande.TableVideo;
-import log.Logger;
 import prog.video.Video;
 
 /**
@@ -11,7 +10,7 @@ import prog.video.Video;
  * @author ronan
  *
  */
-public class CommandeAjout extends Commande {
+public class CommandeAjout extends CommandeListe {
 	
 	public CommandeAjout(TableVideo table, List<Video> listeVideos) {
 		super(table, listeVideos);
@@ -21,9 +20,7 @@ public class CommandeAjout extends Commande {
 	public boolean execute() {
 		List<Video> listeVideosDejaPresentes = table.addAll(listeVideos);
 		listeVideos.removeAll(listeVideosDejaPresentes);
-		if(!listeVideosDejaPresentes.isEmpty())
-			Logger.getInstance().showWarningAlertVideosDejaPresentes(listeVideosDejaPresentes);
-		return !listeVideos.isEmpty();
+		return !listeVideos.isEmpty(); //si cette liste est vide, aucune vidéo n'a donc été ajoutée et cette commande est donc inutile
 	}
 
 	@Override
@@ -34,8 +31,7 @@ public class CommandeAjout extends Commande {
 
 	@Override
 	public boolean reexecute() {
-		List<Video> listeVideosDejaPresentes = table.addAll(listeVideos);
-		Logger.getInstance().showWarningAlertVideosDejaPresentes(listeVideosDejaPresentes);
+		table.addAll(listeVideos);
 		return !listeVideos.isEmpty();
 	}
 

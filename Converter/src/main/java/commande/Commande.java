@@ -1,9 +1,6 @@
 package commande;
 
-import java.util.List;
-
 import affichage.demande.TableVideo;
-import prog.video.Video;
 
 /**
  * Classe abstraite permettant d'effectuer des actions sur la liste de vidéos.
@@ -13,11 +10,9 @@ import prog.video.Video;
 public abstract class Commande {
 	
 	protected TableVideo table;
-	protected List<Video> listeVideos;
 	
-	public Commande(TableVideo table, List<Video> listeVideos) {
+	public Commande(TableVideo table) {
 		this.table = table;
-		this.listeVideos = listeVideos;
 	}
 
 	/**

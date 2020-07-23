@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import commande.Gestionnaire;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -47,7 +48,10 @@ public class FileManager {
 		FileChooser chooser = new FileChooser();
 		ExtensionFilter extFilter = new FileChooser.ExtensionFilter(DESCRIPTION_TYPE_FICHIER, TYPE_FICHIER);
 		chooser.getExtensionFilters().add(extFilter);
-		return chooser.showOpenDialog(window);
+		File fichier = chooser.showOpenDialog(window);
+		if(fichier != null)
+			DirectoryChooserManager.getInstance("sauvegarder").setInitialDirectory(fichier);
+		return fichier;
 	}
 	
 	/**
@@ -85,6 +89,7 @@ public class FileManager {
 			output = new ObjectOutputStream(fos);
 			output.writeObject(listeVideos);
 			output.flush();
+			Gestionnaire.getInstance().notifySave();
 		}
 		catch(IOException e) {
 			throw e;

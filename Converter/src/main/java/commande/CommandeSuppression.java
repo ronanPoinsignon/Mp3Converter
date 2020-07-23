@@ -10,7 +10,7 @@ import prog.video.Video;
  * @author ronan
  *
  */
-public class CommandeSuppression extends Commande {
+public class CommandeSuppression extends CommandeListe {
 	
 	public CommandeSuppression(TableVideo table, List<Video> listeVideos) {
 		super(table, listeVideos);
@@ -32,7 +32,7 @@ public class CommandeSuppression extends Commande {
 	@Override
 	public boolean reexecute() {
 		table.removeAll(listeVideos);
-		return listeVideos.isEmpty();
+		return !listeVideos.isEmpty();
 	}
 
 }
