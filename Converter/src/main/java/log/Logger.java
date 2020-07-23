@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 
+import event.clavier.ClavierEventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -211,6 +212,28 @@ public class Logger {
 		} else {
 		    return false;
 		}
+	}
+	
+	public void showRaccourcisInformation() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.getDialogPane().setMinWidth(700);
+		alert.setTitle("Information sur les raccourcis");
+		alert.setHeaderText("Liste des raccourcis disponibles");
+		StringBuilder raccourcis = new StringBuilder();
+		raccourcis.append("\t" + ClavierEventHandler.MODIFIER_COPIER.getKey() + " + " + ClavierEventHandler.KEY_CODE_COPIER.getName()
+				+ " -> Copie le lien de la vidéo séléctionnée.");
+		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_COLLER.getKey() + " + " + ClavierEventHandler.KEY_CODE_COLLER.getName()
+				+ " -> Ajoute, si possible, l'URL contenu dans le presse papier à la table.");
+		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_SUPPRIMER.getKey() + " + " + ClavierEventHandler.KEY_CODE_SUPPRIMER.getName()
+				+ " -> Supprime la vidéo séléctionnée de la liste.");
+		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_INVERSER_HAUT.getKey() + " + " + ClavierEventHandler.KEY_CODE_INVERSER_HAUT.getName()
+			+ " -> Monte d'un rang dans la liste la vidéo séléectionnée.");
+		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_INVERSER_BAS.getKey() + " + " + ClavierEventHandler.KEY_CODE_INVERSER_BAS.getName()
+			+ " -> Baisse d'un rang dans la liste la vidéo séléectionnée.");
+		
+		alert.setContentText(raccourcis.toString());
+
+		alert.showAndWait();
 	}
 	
 }

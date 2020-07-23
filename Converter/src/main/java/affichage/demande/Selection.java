@@ -17,6 +17,7 @@ import event.action.ActionEventAnnuler;
 import event.action.ActionEventLoadAppend;
 import event.action.ActionEventLoadReset;
 import event.action.ActionEventQuitter;
+import event.action.ActionEventRaccourcis;
 import event.action.ActionEventRedo;
 import event.action.ActionEventSave;
 import event.action.ActionEventSaveSous;
@@ -95,6 +96,9 @@ public class Selection extends BorderPane {
 	private MenuItem itemActionAnnuler = new MenuItem("Annuler");
 	private MenuItem itemActionReexecuter = new MenuItem("Réexécuter");
 	
+	private Menu menuAide = new Menu("Aide");
+	private MenuItem itemRaccourcis = new MenuItem("Liste des raccourcis");
+	
 	private Stage stage;
 	
 	public Selection(Stage stage) {
@@ -123,8 +127,11 @@ public class Selection extends BorderPane {
 		menuAction.getItems().add(itemActionAnnuler);
 		menuAction.getItems().add(itemActionReexecuter);
 		
+		menuAide.getItems().add(itemRaccourcis);
+		
 		this.menuBar.getMenus().add(menuFichier);
 		this.menuBar.getMenus().add(menuAction);
+		this.menuBar.getMenus().add(menuAide);
 		
 		menuBitRate.setMinWidth(TAILLE_BOUTON);
 		menuBitRate.getItems().add("128kb/s");
@@ -187,6 +194,9 @@ public class Selection extends BorderPane {
 		
 		itemActionReexecuter.setOnAction(new ActionEventRedo(this));
 		itemActionReexecuter.setAccelerator(KeyCombination.keyCombination("Ctrl+Y"));
+		
+		itemRaccourcis.setOnAction(new ActionEventRaccourcis(this));
+		itemRaccourcis.setAccelerator(KeyCombination.keyCombination("Ctrl+H"));
 		
 		this.stage.setOnCloseRequest(new WindowEventQuitter(this));
 	}

@@ -1,5 +1,6 @@
 package commande;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import affichage.demande.TableVideo;
@@ -11,6 +12,8 @@ import prog.video.Video;
  *
  */
 public class CommandeSuppression extends CommandeListe {
+	
+	private List<Integer> listeIndex = new ArrayList<>();
 	
 	public CommandeSuppression(TableVideo table, List<Video> listeVideos) {
 		super(table, listeVideos);

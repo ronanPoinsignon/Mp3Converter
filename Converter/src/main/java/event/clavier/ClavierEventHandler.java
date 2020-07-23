@@ -7,15 +7,28 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyCombination.Modifier;
 import javafx.scene.input.KeyEvent;
 
 public class ClavierEventHandler implements EventHandler<KeyEvent> {
 
-	KeyCombination copier = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
-	KeyCombination coller = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
-	KeyCombination supprimer = new KeyCodeCombination(KeyCode.DELETE, KeyCombination.META_ANY);
-	KeyCombination inverserHaut = new KeyCodeCombination(KeyCode.UP, KeyCombination.ALT_DOWN);
-	KeyCombination inverserBas = new KeyCodeCombination(KeyCode.DOWN, KeyCombination.ALT_DOWN);
+	public static final KeyCode KEY_CODE_COPIER = KeyCode.C,
+			KEY_CODE_COLLER = KeyCode.V,
+			KEY_CODE_SUPPRIMER = KeyCode.DELETE,
+			KEY_CODE_INVERSER_HAUT = KeyCode.UP,
+			KEY_CODE_INVERSER_BAS = KeyCode.DOWN;
+	
+	public static final Modifier MODIFIER_COPIER = KeyCombination.CONTROL_DOWN,
+			MODIFIER_COLLER = KeyCombination.CONTROL_DOWN,
+			MODIFIER_SUPPRIMER = KeyCombination.META_ANY,
+			MODIFIER_INVERSER_HAUT = KeyCombination.ALT_DOWN,
+			MODIFIER_INVERSER_BAS = KeyCombination.ALT_DOWN;
+	
+	private KeyCombination copier = new KeyCodeCombination(KEY_CODE_COPIER, MODIFIER_COPIER);
+	private KeyCombination coller = new KeyCodeCombination(KEY_CODE_COLLER, MODIFIER_COLLER);
+	private KeyCombination supprimer = new KeyCodeCombination(KEY_CODE_SUPPRIMER, MODIFIER_SUPPRIMER);
+	private KeyCombination inverserHaut = new KeyCodeCombination(KEY_CODE_INVERSER_HAUT, MODIFIER_INVERSER_HAUT);
+	private KeyCombination inverserBas = new KeyCodeCombination(KEY_CODE_INVERSER_BAS, MODIFIER_INVERSER_BAS);
 	
 	private Selection selection;
 	
