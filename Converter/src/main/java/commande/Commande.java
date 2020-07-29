@@ -21,7 +21,7 @@ public abstract class Commande {
 	public abstract boolean execute();
 	
 	/**
-	 * Annule l'exécution/
+	 * Annule l'exécution
 	 */
 	public abstract boolean annuler();
 	

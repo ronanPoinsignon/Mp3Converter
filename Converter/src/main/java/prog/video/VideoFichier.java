@@ -1,6 +1,9 @@
 package prog.video;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class VideoFichier extends Video {
 
@@ -9,24 +12,24 @@ public class VideoFichier extends Video {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public VideoFichier() {
-
-	}
-	
-	public VideoFichier(String titre, String lien){
-		super(titre, lien);
+	public VideoFichier(String lien){
+		super("", lien);
+		File fichier = new File(lien);
+		this.titre = fichier.getName().substring(0, fichier.getName().lastIndexOf("."));
 	}
 
 	@Override
-	public File convertToMp4(File folder) {
-		// TODO Auto-generated method stub
-		return null;
+	public File convertToMp4(File folder) throws IOException {
+		File fichier = new File(lien);
+		File nouveauFichier = new File(folder.getPath() + "\\" + fichier.getName());
+		return Files.copy(fichier.toPath(), nouveauFichier.toPath(), StandardCopyOption.REPLACE_EXISTING).toFile();
 	}
 
 	@Override
 	public File convertToMp4GoodQuality(File folder) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		File fichier = new File(lien);
+		File nouveauFichier = new File(folder.getPath() + "\\" + fichier.getName());
+		return Files.copy(fichier.toPath(), nouveauFichier.toPath(), StandardCopyOption.REPLACE_EXISTING).toFile();
 	}
 
 }

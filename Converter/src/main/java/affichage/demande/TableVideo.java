@@ -35,6 +35,23 @@ public class TableVideo extends TableView<Video> {
 	}
 	
 	/**
+	 * Ajoute la vidéo dans la liste. Renvoie une erreur si la vidéo est déjà présente.
+	 * Renvoie TRUE si l'insertion a fonctionné.
+	 * @param video
+	 * @return
+	 * @throws VideoDejaPresenteException
+	 */
+	public boolean add(Video video, int index) throws VideoDejaPresenteException, UnsupportedOperationException,
+		ClassCastException, NullPointerException, IllegalArgumentException {
+		if(video == null)
+			return false;
+		if(this.getItems().contains(video))
+			throw new VideoDejaPresenteException();
+		this.getItems().add(index, video);
+		return true;
+	}
+	
+	/**
 	 * Ajoute toutes les vidéos à la liste. Renvoie les vidéos qui sont déjà dans la liste.
 	 * @param listeVideos
 	 * @return

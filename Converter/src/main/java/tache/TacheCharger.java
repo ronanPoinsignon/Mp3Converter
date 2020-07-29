@@ -1,5 +1,6 @@
 package tache;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +8,9 @@ import java.util.List;
 import com.github.kiulian.downloader.YoutubeException;
 import com.github.kiulian.downloader.YoutubeException.BadPageException;
 
+import log.Logger;
 import prog.video.Video;
+import prog.video.VideoFichier;
 import prog.video.VideoYtb;
 
 /**
@@ -38,7 +41,15 @@ public class TacheCharger extends Tache<List<Video>>{
 		for(String url : listeUrls) {
 			try {
 				this.updateMessage("chargement de " + url);
-				listeVideos.add(new VideoYtb(url));
+				File fichier = new File(url);
+				if(fichier.exists()) {
+					if(fichier.isFile())
+						listeVideos.add(new VideoFichier(url));
+					else
+						Logger.getInstance().showWarningAlertIsDIrectory();
+				}
+				else
+					listeVideos.add(new VideoYtb(url));
 			} catch(BadPageException e) {
 				listeUrlsMauvaisLien.add(url);
 				e.printStackTrace();
@@ -47,6 +58,8 @@ public class TacheCharger extends Tache<List<Video>>{
 				e.printStackTrace();
 			} catch(NullPointerException e) {
 				
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
 			this.updateProgress(++cpt, tailleListe);
 		}

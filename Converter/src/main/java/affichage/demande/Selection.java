@@ -230,7 +230,9 @@ public class Selection extends BorderPane {
     			updateActionPossibleGestionnaire();
             }
         });
-		new Thread(tache).start();
+		Thread th = new Thread(tache);
+		th.setDaemon(true);
+		th.start();
 	}
 	
 	/**
@@ -315,7 +317,9 @@ public class Selection extends BorderPane {
         		updateActionPossibleGestionnaire();
             }
         });
-		new Thread(tache).start();
+		Thread th = new Thread(tache);
+		th.setDaemon(true);
+		th.start();
 		indicateur.progressProperty().unbind();
 		indicateur.progressProperty().bind(tache.progressProperty());
 		labelIndicateur.textProperty().bind(tache.messageProperty());
@@ -351,7 +355,9 @@ public class Selection extends BorderPane {
 				}
             }
         });
-		new Thread(tacheVideo).start();
+		Thread th = new Thread(tacheVideo);
+		th.setDaemon(true);
+		th.start();
 	}
 	
 	/**

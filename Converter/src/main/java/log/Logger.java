@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import event.clavier.ClavierEventHandler;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -138,36 +139,40 @@ public class Logger {
 	 * @param e
 	 */
 	public void showErrorAlert(Exception e) {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Exception Dialog");
-		alert.setHeaderText("Un problème est apparu");
-		alert.setContentText("Veuillez redémarrer l'application");
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Exception Dialog");
+				alert.setHeaderText("Un problème est apparu");
+				alert.setContentText("Veuillez redémarrer l'application");
 
-		// Create expandable Exception.
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		String exceptionText = sw.toString();
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				String exceptionText = sw.toString();
 
-		Label label = new Label("Erreur : ");
+				Label label = new Label("Erreur : ");
 
-		TextArea textArea = new TextArea(exceptionText);
-		textArea.setEditable(false);
-		textArea.setWrapText(true);
+				TextArea textArea = new TextArea(exceptionText);
+				textArea.setEditable(false);
+				textArea.setWrapText(true);
 
-		textArea.setMaxWidth(Double.MAX_VALUE);
-		textArea.setMaxHeight(Double.MAX_VALUE);
-		GridPane.setVgrow(textArea, Priority.ALWAYS);
-		GridPane.setHgrow(textArea, Priority.ALWAYS);
+				textArea.setMaxWidth(Double.MAX_VALUE);
+				textArea.setMaxHeight(Double.MAX_VALUE);
+				GridPane.setVgrow(textArea, Priority.ALWAYS);
+				GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-		GridPane expContent = new GridPane();
-		expContent.setMaxWidth(Double.MAX_VALUE);
-		expContent.add(label, 0, 0);
-		expContent.add(textArea, 0, 1);
+				GridPane expContent = new GridPane();
+				expContent.setMaxWidth(Double.MAX_VALUE);
+				expContent.add(label, 0, 0);
+				expContent.add(textArea, 0, 1);
 
-		alert.getDialogPane().setExpandableContent(expContent);
-		
-		alert.showAndWait();
+				alert.getDialogPane().setExpandableContent(expContent);
+				
+				alert.showAndWait();
+			}
+		});
 	}
 
 	/**
@@ -212,6 +217,44 @@ public class Logger {
 		} else {
 		    return false;
 		}
+	}
+	
+	public void showWarningAlertIsDIrectory() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.getDialogPane().setMinWidth(700);
+		alert.setTitle("Ceci n'est pas un fichier vidéo.");
+		alert.setHeaderText("Le lien que vous avez donné correspond à un lien de dossier.");
+		alert.setContentText("Veuillez donner le lien d'un fichier vidéo.");
+
+		alert.showAndWait();
+	}
+	
+	public void showErrorAlertIsNotVideoFile(List<Video> listeVideos) {
+		if(listeVideos.isEmpty())
+			return;
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+
+				Alert alert = null;
+				try {
+					alert = new Alert(AlertType.ERROR);
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					return;
+				}
+				alert.setTitle("Les fichiers suivant ne sont pas des vidéos.");
+				alert.setHeaderText("Les fichiers que vous avez donné correspondent à un format de fichier n'étant pas un format vidéo.");
+				StringBuilder liens = new StringBuilder("Les fichiers en questions sont listés ci-dessous :");
+				for(Video video : listeVideos) {
+					liens.append("\n\t- " + video.getTitre());
+				}
+				alert.setContentText(liens.toString());
+
+				alert.showAndWait();
+			}
+		});
 	}
 	
 	public void showRaccourcisInformation() {

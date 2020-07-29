@@ -30,6 +30,7 @@ public class ConvertisseurMusique extends Convertisseur {
 		attrs.setAudioAttributes(audio); 
 		Encoder encoder = new Encoder();  
 		MultimediaObject multimediaObject = new MultimediaObject(input);
+		System.out.println("output : " + output.getPath());
 		encoder.encode(multimediaObject, output, attrs);
 		return output;
 	}

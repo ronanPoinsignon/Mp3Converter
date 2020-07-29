@@ -44,7 +44,9 @@ public class VideoYtb extends Video {
 	@Override
 	public File convertToMp4GoodQuality(File folder) throws YoutubeException, IOException {
 		Downloader downloader = new Downloader();
-		return downloader.download(folder, id, titre, true);
+		File fichier = downloader.download(folder, id, titre, true);
+		System.out.println(fichier.getPath());
+		return fichier;
 	}
 
 	/**
