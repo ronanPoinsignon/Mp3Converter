@@ -74,11 +74,10 @@ public class Downloader {
 		String titre = title;
 		if(titre == null || titre.isEmpty())
 			titre = video.details().title();
-		folder = Utils.getFilePathWithoutIllegalChar(folder);
 		if(!folder.exists())
 			folder.mkdirs();
+		titre = Utils.getVideoTitleWithoutIllegalChar(titre);
 		File fichierVideo = new File(folder.getPath() + "\\" + titre + ".mp4");
-		fichierVideo = Utils.getFilePathWithoutIllegalChar(fichierVideo);
 		try (InputStream in = website.openStream()) {
 		    Files.copy(in, fichierVideo.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}

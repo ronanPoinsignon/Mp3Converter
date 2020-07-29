@@ -58,7 +58,6 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		else {
 			folderMp4 = new File(folder.getPath() + "\\mp4H");
 		}
-		folder = Utils.getFilePathWithoutIllegalChar(folder);
 		folderMp4.mkdirs();
 		try {
 			Files.setAttribute(Paths.get(folderMp4.getPath()), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
@@ -128,9 +127,9 @@ public class TacheConvertirToFile extends Task<List<File>> {
 			File folderVideo = new File(folder + "\\" + extension.toLowerCase());
 			if(!folderVideo.exists())
 				folderVideo.mkdirs();
-			fichier = new File(folderVideo.getPath() + "\\" + video.getTitre() + "." + extension.toLowerCase());
-			fichier = Utils.getFilePathWithoutIllegalChar(fichier);
-			System.out.println(fichier.getPath());
+			String titre = Utils.getVideoTitleWithoutIllegalChar(video.getTitre());
+			System.out.println(titre);
+			fichier = new File(folderVideo.getPath() + "\\" + titre + "." + extension.toLowerCase());
 			if(extension.equalsIgnoreCase("mp3")) {
 				convertisseur = new ConvertisseurMusique(bitRate);
 			}
