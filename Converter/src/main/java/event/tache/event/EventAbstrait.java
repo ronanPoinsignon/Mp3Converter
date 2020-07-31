@@ -3,6 +3,11 @@ package event.tache.event;
 import javafx.event.Event;
 import javafx.event.EventType;
 
+/**
+ * Evénement abstrait.
+ * @author ronan
+ *
+ */
 public abstract class EventAbstrait extends Event {
 
     /**

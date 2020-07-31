@@ -7,12 +7,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Classe main de l'application.
+ * Classe main de l'application FX.
  * @author ronan
  *
  */
 public class AppliFx extends Application {
 
+	/**
+	 * Main FX.
+	 * @param args
+	 */
 	public static void mainFx(String[] args) {
 		Application.launch(args);
 	}

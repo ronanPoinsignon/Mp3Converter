@@ -487,16 +487,26 @@ public class Selection extends BorderPane {
 		table.setSelectionModel(model);
 	}
 	
+	/**
+	 * Récupère le lien de la ligne séléctionnée dans la table.
+	 * @return
+	 */
 	public String getSelectedLink() {
 		int index = table.getSelectionModel().getSelectedIndex();
 		return table.getItems().get(index).getLien();
 	}
 	
+	/**
+	 * Inverse la ligne séléctionnée avec celle du haut.
+	 */
 	public void swapUp() {
 		int index = table.getSelectionModel().getSelectedIndex();
 		Gestionnaire.getInstance().addCommande(new CommandeInversion(table, index, index - 1)).executer();
 	}
 	
+	/**
+	 * Inverse la ligne séléctionnée avec celle du bas.
+	 */
 	public void swapDown() {
 		int index = table.getSelectionModel().getSelectedIndex();
 		Gestionnaire.getInstance().addCommande(new CommandeInversion(table, index, index + 1)).executer();

@@ -4,6 +4,11 @@ import java.util.Collections;
 
 import affichage.demande.TableVideo;
 
+/**
+ * Commande permettant l'inversion de deux lignes dans la table
+ * @author ronan
+ *
+ */
 public class CommandeInversion extends Commande {
 
 	int inv1, inv2;

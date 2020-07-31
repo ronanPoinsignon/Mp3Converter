@@ -6,6 +6,11 @@ import java.util.List;
 import affichage.demande.TableVideo;
 import prog.video.Video;
 
+/**
+ * Commande permettant de changer la table existante en une nouvelle.
+ * @author ronan
+ *
+ */
 public class CommandeReset extends CommandeListe {
 
 	List<Video> listeVideosSupprimees = new ArrayList<>();

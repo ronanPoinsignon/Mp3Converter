@@ -211,6 +211,11 @@ public class Logger {
 	}
 	
 
+	/**
+	 * Affiche une {@link Alert} permettant une confirmation lors de la fermeture de l'application
+	 * si les actions efféctuées sur cette dernière n'ont pas été sauvegardées.
+	 * @return
+	 */
 	public boolean canQuit() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Vous n'avez pas sauvegardé");
@@ -225,6 +230,10 @@ public class Logger {
 		}
 	}
 	
+	/**
+	 * Affiche une {@link Alert} mettant en garde l'utilisateur que le lien qu'il a donné à
+	 * l'application est un dossier et non un fichier.
+	 */
 	public void showWarningAlertIsDIrectory() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.getDialogPane().setMinWidth(700);
@@ -235,7 +244,12 @@ public class Logger {
 		alert.showAndWait();
 	}
 	
-	public void showErrorAlertIsNotVideoFile(List<Video> listeVideos) {
+	/**
+	 * Affiche une {@link Alert} mettant en garde l'utilisateur que certains fichiers
+	 * qu'il a donné ne correspondent pas à des fichiers vidéos.
+	 * @param listeVideos
+	 */
+	public void showWarningAlertIsNotVideoFile(List<Video> listeVideos) {
 		if(listeVideos.isEmpty())
 			return;
 		Platform.runLater(new Runnable() {
@@ -263,26 +277,35 @@ public class Logger {
 		});
 	}
 	
+	/**
+	 * Affiche une {@link Alert} permettant l'affichage de la liste de raccourcis disponibles dans l'application.
+	 */
 	public void showRaccourcisInformation() {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.getDialogPane().setMinWidth(700);
-		alert.setTitle("Information sur les raccourcis");
-		alert.setHeaderText("Liste des raccourcis disponibles");
-		StringBuilder raccourcis = new StringBuilder();
-		raccourcis.append("\t" + ClavierEventHandler.MODIFIER_COPIER.getKey() + " + " + ClavierEventHandler.KEY_CODE_COPIER.getName()
-				+ " -> Copie le lien de la vidéo séléctionnée.");
-		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_COLLER.getKey() + " + " + ClavierEventHandler.KEY_CODE_COLLER.getName()
-				+ " -> Ajoute, si possible, l'URL contenu dans le presse papier à la table.");
-		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_SUPPRIMER.getKey() + " + " + ClavierEventHandler.KEY_CODE_SUPPRIMER.getName()
-				+ " -> Supprime la vidéo séléctionnée de la liste.");
-		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_INVERSER_HAUT.getKey() + " + " + ClavierEventHandler.KEY_CODE_INVERSER_HAUT.getName()
-			+ " -> Monte d'un rang dans la liste la vidéo séléectionnée.");
-		raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_INVERSER_BAS.getKey() + " + " + ClavierEventHandler.KEY_CODE_INVERSER_BAS.getName()
-			+ " -> Baisse d'un rang dans la liste la vidéo séléectionnée.");
-		
-		alert.setContentText(raccourcis.toString());
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.getDialogPane().setMinWidth(700);
+				alert.setTitle("Information sur les raccourcis");
+				alert.setHeaderText("Liste des raccourcis disponibles");
+				StringBuilder raccourcis = new StringBuilder();
+				raccourcis.append("\t" + ClavierEventHandler.MODIFIER_COPIER.getKey() + " + " + ClavierEventHandler.KEY_CODE_COPIER.getName()
+						+ " -> Copie le lien de la vidéo séléctionnée.");
+				raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_COLLER.getKey() + " + " + ClavierEventHandler.KEY_CODE_COLLER.getName()
+						+ " -> Ajoute, si possible, l'URL contenu dans le presse papier à la table.");
+				raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_SUPPRIMER.getKey() + " + " + ClavierEventHandler.KEY_CODE_SUPPRIMER.getName()
+						+ " -> Supprime la vidéo séléctionnée de la liste.");
+				raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_INVERSER_HAUT.getKey() + " + " + ClavierEventHandler.KEY_CODE_INVERSER_HAUT.getName()
+					+ " -> Monte d'un rang dans la liste la vidéo séléectionnée.");
+				raccourcis.append("\n\t" + ClavierEventHandler.MODIFIER_INVERSER_BAS.getKey() + " + " + ClavierEventHandler.KEY_CODE_INVERSER_BAS.getName()
+					+ " -> Baisse d'un rang dans la liste la vidéo séléectionnée.");
+				
+				alert.setContentText(raccourcis.toString());
 
-		alert.showAndWait();
+				alert.showAndWait();
+			}
+		});
 	}
 	
 }

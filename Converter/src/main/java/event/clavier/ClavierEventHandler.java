@@ -10,6 +10,11 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyCombination.Modifier;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Classe traitant la récéption d'événement clavier.
+ * @author ronan
+ *
+ */
 public class ClavierEventHandler implements EventHandler<KeyEvent> {
 
 	public static final KeyCode KEY_CODE_COPIER = KeyCode.C,
@@ -74,6 +79,9 @@ public class ClavierEventHandler implements EventHandler<KeyEvent> {
 		}
 	}
 	
+	/**
+	 * Copie la ligne séléctionnée de la table dans le presse-papiers. 
+	 */
 	public void copier() {
 		Clipboard clipboard = Clipboard.getSystemClipboard();
 		ClipboardContent content = new ClipboardContent();
@@ -86,6 +94,10 @@ public class ClavierEventHandler implements EventHandler<KeyEvent> {
 		}
 	}
 	
+	/**
+	 * Colle le contenu du presse-papiers dans la table afin d'essayer d'en ajouter le contenu.
+	 * Le contenu doit être un lien menant vers une vidéo.
+	 */
 	public void coller() {
 		Clipboard clipboard = Clipboard.getSystemClipboard();
 		String str = clipboard.getString();
@@ -93,6 +105,9 @@ public class ClavierEventHandler implements EventHandler<KeyEvent> {
 			selection.addVideoToTable(clipboard.getString());
 	}
 	
+	/**
+	 * Supprime une ligne de la table.
+	 */
 	public void supprimer() {
 		try {
 			selection.removeLine();
@@ -101,7 +116,10 @@ public class ClavierEventHandler implements EventHandler<KeyEvent> {
 			
 		}
 	}
-	
+
+	/**
+	 * Inverse la ligne séléctionnée avec celle du haut.
+	 */
 	public void swapUp() {
 		try {
 			selection.swapUp();
@@ -111,6 +129,9 @@ public class ClavierEventHandler implements EventHandler<KeyEvent> {
 		}
 	}
 	
+	/**
+	 * Inverse la ligne séléctionnée avec celle du bas.
+	 */
 	public void swapDown() {
 		try {
 			selection.swapDown();

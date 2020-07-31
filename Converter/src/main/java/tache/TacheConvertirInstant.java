@@ -12,6 +12,12 @@ import javafx.event.EventHandler;
 import log.Logger;
 import prog.video.Video;
 
+/**
+ * {@link Tache} permettant une conversion instantannée en vidéo depuis un lien donné sans passer par les actions 
+ * normales d'ajout dans la liste d'une vidéo puis de conversion.
+ * @author ronan
+ *
+ */
 public class TacheConvertirInstant extends Tache<Video> {
 
 	private String url;

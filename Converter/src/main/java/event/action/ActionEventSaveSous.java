@@ -5,6 +5,11 @@ import fichier.DirectoryChooserManager;
 import javafx.event.ActionEvent;
 import prog.Utils;
 
+/**
+ * Evénement permettant une nouvelle sauvegarde.
+ * @author ronan
+ *
+ */
 public class ActionEventSaveSous extends ActionEventHandler {
 
 	public ActionEventSaveSous(Selection selection) {

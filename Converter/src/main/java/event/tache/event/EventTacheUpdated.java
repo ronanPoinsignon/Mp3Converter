@@ -2,7 +2,13 @@ package event.tache.event;
 
 import javafx.event.Event;
 import javafx.event.EventType;
+import tache.Tache;
 
+/**
+ * Evénement abstrait utilisé dans les différentes {@link Tache} de l'application.
+ * @author ronan
+ *
+ */
 public abstract class EventTacheUpdated extends EventAbstrait {
 
 	/**

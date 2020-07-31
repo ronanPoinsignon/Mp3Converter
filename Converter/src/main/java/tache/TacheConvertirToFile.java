@@ -87,7 +87,7 @@ public class TacheConvertirToFile extends Task<List<File>> {
 				}
 				this.updateProgress(++cpt, tailleListe);
 			}
-			Logger.getInstance().showErrorAlertIsNotVideoFile(listeMauvaisFichiers);
+			Logger.getInstance().showWarningAlertIsNotVideoFile(listeMauvaisFichiers);
 			try {
 				if(!hasMp4)
 					deleteFile(folderMp4);
@@ -117,6 +117,15 @@ public class TacheConvertirToFile extends Task<List<File>> {
 			.forEach(File::delete);
 	}
 	
+	/**
+	 * Covertit la {@link Video} en fichier vidéo.
+	 * @param video
+	 * @param folder
+	 * @param folderMp4
+	 * @param goodQuality
+	 * @return
+	 * @throws Exception
+	 */
 	private File convertVideo(Video video, File folder, File folderMp4, boolean goodQuality) throws Exception {
 		ArrayList<File> listeMp4 = new ArrayList<>();
 		File fichier = null, fichierMp4 = null;
@@ -151,6 +160,11 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		return fichier;
 	}
 	
+	/**
+	 * Supprime le fichier donné en paramètre.
+	 * @param folder
+	 * @param hasMp4
+	 */
 	public void deleteFolder(File folder, boolean hasMp4) {
 		if(!hasMp4) {
 			try {

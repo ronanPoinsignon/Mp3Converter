@@ -4,6 +4,11 @@ import affichage.demande.Selection;
 import javafx.event.ActionEvent;
 import log.Logger;
 
+/**
+ * Evénement permettant l'affichage d'une bulle d'information correspondant à la liste des racourcis disponibles.
+ * @author ronan
+ *
+ */
 public class ActionEventRaccourcis extends ActionEventHandler {
 
 	public ActionEventRaccourcis(Selection selection) {

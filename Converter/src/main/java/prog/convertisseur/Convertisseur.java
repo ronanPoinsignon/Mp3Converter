@@ -10,6 +10,11 @@ import ws.schild.jave.InputFormatException;
 import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.VideoAttributes;
 
+/**
+ * classe abstraite pour la conversion de fichiers en vidéo / audio.
+ * @author ronan
+ *
+ */
 public abstract class Convertisseur {
 
 	protected String extension;
@@ -24,6 +29,15 @@ public abstract class Convertisseur {
 	
 	public abstract File convertir(File input, File output) throws Exception;
 	
+	/**
+	 * Enlève le son de la vidéo.
+	 * @param input
+	 * @param output
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws InputFormatException
+	 * @throws EncoderException
+	 */
 	protected File convertirToVideoSansSon(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
 		EncodingAttributes attrs = new EncodingAttributes();
 		VideoAttributes video = new VideoAttributes(); 
@@ -38,6 +52,15 @@ public abstract class Convertisseur {
 		return output;
 	}
 	
+	/**
+	 * Convertit le fichier donné en vidéo.
+	 * @param input
+	 * @param output
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws InputFormatException
+	 * @throws EncoderException
+	 */
 	protected File convertirToVideo(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
 		EncodingAttributes attrs = new EncodingAttributes(); 
 		if(audioBitRate > 0) {

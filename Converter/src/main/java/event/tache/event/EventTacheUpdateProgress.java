@@ -3,6 +3,11 @@ package event.tache.event;
 import event.tache.handler.EventHandlerTacheUpdateProgress;
 import javafx.event.EventType;
 
+/**
+ * Evénement transmettant une progression.
+ * @author ronan
+ *
+ */
 public class EventTacheUpdateProgress extends EventTacheUpdated {
 
 	/**

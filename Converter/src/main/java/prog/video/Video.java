@@ -2,6 +2,11 @@ package prog.video;
 
 import java.io.Serializable;
 
+/**
+ * Classe abstraite symbolisant une vidéo.
+ * @author ronan
+ *
+ */
 public abstract class Video implements Serializable, Convertissable {
 
 	/**

@@ -5,6 +5,12 @@ import event.tache.event.EventTacheUpdated;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
+/**
+ * Tache abstraite utilisée le maniement d'événements.
+ * @author ronan
+ *
+ * @param <T>
+ */
 public abstract class Tache<T> extends Task<T> {
 	
 	@Override
@@ -38,6 +44,10 @@ public abstract class Tache<T> extends Task<T> {
 		//fireUpdateEvent(new EventTacheUpdateValue());
 	}
 	
+	/**
+	 * Active un événement donné.
+	 * @param event
+	 */
 	private void fireUpdateEvent(EventTacheUpdated event) {
 		Platform.runLater(new Runnable() {
 			

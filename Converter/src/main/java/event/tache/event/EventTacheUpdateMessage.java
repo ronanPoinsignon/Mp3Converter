@@ -3,6 +3,11 @@ package event.tache.event;
 import event.tache.handler.EventHandlerTacheUpdateMessage;
 import javafx.event.EventType;
 
+/**
+ * Evénement transmettant un message.
+ * @author ronan
+ *
+ */
 public class EventTacheUpdateMessage extends EventTacheUpdated {
 
 	/**

@@ -7,13 +7,15 @@ package exception;
  */
 public class VideoDejaPresenteException extends Exception {
 
+	private static final String message = "La vidéo est déjà présente dans la table";
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
 	public VideoDejaPresenteException() {
-		super("La vidéo est déjà présente dans la table");
+		super(message);
 	}
 
 }

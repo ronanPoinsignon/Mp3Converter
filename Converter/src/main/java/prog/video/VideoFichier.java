@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Classe permettant la gestion de fichier vidéo donné directement depuis l'ordinateur.
+ * @author ronan
+ *
+ */
 public class VideoFichier extends Video {
 
 	/**
