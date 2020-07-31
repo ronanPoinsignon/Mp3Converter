@@ -9,7 +9,7 @@ public abstract class EventTacheUpdated extends EventAbstrait {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected static final EventType<EventTacheUpdated> EVENT_UPDATE = new EventType<>(ANY);
+	public static final EventType<EventTacheUpdated> EVENT_UPDATE = new EventType<>(ANY);
 
     public EventTacheUpdated(EventType<? extends Event> eventType) {
 		super(eventType);

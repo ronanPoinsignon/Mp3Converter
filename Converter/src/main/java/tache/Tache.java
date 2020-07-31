@@ -10,26 +10,27 @@ public abstract class Tache<T> extends Task<T> {
 	@Override
 	public void updateMessage(String msg) {
 		super.updateMessage(msg);
+		System.out.println("message : " + msg);
 		fireUpdateEvent(new EventTacheUpdateMessage(msg));
 	}
 	
-	@Override
+	/*@Override
 	public void updateTitle(String title) {
 		super.updateMessage(title);
-		//fireUpdateEvent(new EventTacheUpdateTitle());
-	}
+		fireUpdateEvent(new EventTacheUpdateTitle(title));
+	}*/
 	
 	@Override
 	public void updateProgress(long workDone, long max) {
 		super.updateProgress(workDone, max);
-		//fireUpdateEvent(new EventTacheUpdateProgress());
+		//fireUpdateEvent(new EventTacheUpdateProgress(workDone, max));
 	}
 	
-	@Override
+	/*@Override
 	public void updateProgress(double workDone, double max) {
 		super.updateProgress(workDone, max);
-		//fireUpdateEvent(new EventTacheUpdateProgress());
-	}
+		fireUpdateEvent(new EventTacheUpdateProgress(workDone, max));
+	}*/
 	
 	@Override
 	public void updateValue(T value) {
@@ -42,7 +43,9 @@ public abstract class Tache<T> extends Task<T> {
 			
 			@Override
 			public void run() {
+				System.out.println("bla");
 				Tache.this.fireEvent(event);
+				System.out.println("ble");
 			}
 		});
 	}

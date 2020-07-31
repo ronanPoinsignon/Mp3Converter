@@ -57,14 +57,14 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		}
 		else {
 			folderMp4 = new File(folder.getPath() + "\\mp4H");
+			try {
+				Files.setAttribute(Paths.get(folderMp4.getPath()), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+			} catch (IOException e) {
+				Logger.getInstance().showErrorAlert(e);
+				e.printStackTrace();
+			}
 		}
 		folderMp4.mkdirs();
-		try {
-			Files.setAttribute(Paths.get(folderMp4.getPath()), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-		} catch (IOException e) {
-			Logger.getInstance().showErrorAlert(e);
-			e.printStackTrace();
-		}
 		if(hasMp4)
 			listeExtensions.remove("mp4");
 		for(Video video : listeVideos) {
@@ -123,12 +123,12 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		else
 			fichierMp4 = video.convertToMp4(folderMp4);
 		listeMp4.add(fichierMp4);
+		String titre = Utils.getVideoTitleWithoutIllegalChar(video.getTitre());
 		for(String extension : listeExtensions) {
+			this.updateMessage("conversion de " + titre + " en " + extension);
 			File folderVideo = new File(folder + "\\" + extension.toLowerCase());
 			if(!folderVideo.exists())
 				folderVideo.mkdirs();
-			String titre = Utils.getVideoTitleWithoutIllegalChar(video.getTitre());
-			System.out.println(titre);
 			fichier = new File(folderVideo.getPath() + "\\" + titre + "." + extension.toLowerCase());
 			if(extension.equalsIgnoreCase("mp3")) {
 				convertisseur = new ConvertisseurMusique(bitRate);

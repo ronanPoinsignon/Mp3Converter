@@ -2,20 +2,15 @@ package tache;
 
 import java.util.List;
 
-import event.tache.event.EventTacheUpdateMessage;
-import event.tache.event.EventTacheUpdateProgress;
-import event.tache.handler.EventHandlerTacheUpdateMessage;
-import event.tache.handler.EventHandlerTacheUpdateProgress;
-import javafx.concurrent.WorkerStateEvent;
+import event.tache.event.EventTacheUpdated;
 import javafx.event.EventHandler;
-import log.Logger;
 import prog.video.Video;
 
-public class TacheConvertirUrlToVideo extends Tache<Video> {
+public class TacheConvertirInstant extends Tache<Video> {
 
 	private String url;
 	
-	public TacheConvertirUrlToVideo(String url) {
+	public TacheConvertirInstant(String url) {
 		this.url = url;
 	}
 	
@@ -23,7 +18,14 @@ public class TacheConvertirUrlToVideo extends Tache<Video> {
 	protected Video call() throws Exception {
 		TacheCharger tache = new TacheCharger(url);
 		System.out.println("0");
-		tache.addEventHandler(EventTacheUpdateProgress.EVENT_UPDATE_PROGRESS, new EventHandlerTacheUpdateProgress() {
+		tache.addEventHandler(EventTacheUpdated.EVENT_UPDATE, new EventHandler<EventTacheUpdated>() {
+
+			@Override
+			public void handle(EventTacheUpdated event) {
+				System.out.println(event.getEventType());
+			}
+		});
+		/*tache.addEventHandler(EventTacheUpdateProgress.EVENT_UPDATE_PROGRESS, new EventHandlerTacheUpdateProgress() {
 			@Override
 			public void onUpdateProgress(long workDone, long max) {
 				TacheConvertirUrlToVideo.this.updateProgress(workDone, max);
@@ -48,7 +50,7 @@ public class TacheConvertirUrlToVideo extends Tache<Video> {
                 }
         		Logger.getInstance().showErrorAlertVideosNonChargees(tache.getListeUrlsMauvaisLien(), tache.getListeUrlsErreur());
             }
-        });
+        });*/
 		System.out.println("3");
 		new Thread(tache).start();
 		List<Video> liste = tache.getValue();

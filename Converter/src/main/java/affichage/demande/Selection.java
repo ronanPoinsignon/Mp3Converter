@@ -55,7 +55,7 @@ import prog.Downloader;
 import prog.video.Video;
 import tache.TacheCharger;
 import tache.TacheConvertirToFile;
-import tache.TacheConvertirUrlToVideo;
+import tache.TacheConvertirInstant;
 
 /**
  * Classe gérant les éléments affichés.
@@ -162,7 +162,7 @@ public class Selection extends BorderPane {
 		this.setBottom(gridProgression);
 		labelIndicateur.setPadding(new Insets(0,0,0,30));
 		gridProgression.setPadding(new Insets(10,0,0,10));
-		boutonConvertirUne.setDisable(true);
+		//boutonConvertirUne.setDisable(true);
 	}
 	
 	/**
@@ -330,7 +330,7 @@ public class Selection extends BorderPane {
 	 * @param url
 	 */
 	public void convertirFromUrl(String url) {
-		TacheConvertirUrlToVideo tacheVideo = new TacheConvertirUrlToVideo(url);
+		TacheConvertirInstant tacheVideo = new TacheConvertirInstant(url);
 		TableViewSelectionModel<Video> defaultSelectionModel = table.getSelectionModel();
 		labelIndicateur.textProperty().unbind();
 		labelIndicateur.textProperty().bind(tacheVideo.messageProperty());
