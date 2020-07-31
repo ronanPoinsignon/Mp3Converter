@@ -54,8 +54,8 @@ import log.Logger;
 import prog.Downloader;
 import prog.video.Video;
 import tache.TacheCharger;
-import tache.TacheConvertirToFile;
 import tache.TacheConvertirInstant;
+import tache.TacheConvertirToFile;
 
 /**
  * Classe gérant les éléments affichés.
@@ -162,7 +162,7 @@ public class Selection extends BorderPane {
 		this.setBottom(gridProgression);
 		labelIndicateur.setPadding(new Insets(0,0,0,30));
 		gridProgression.setPadding(new Insets(10,0,0,10));
-		//boutonConvertirUne.setDisable(true);
+		boutonConvertirUne.setDisable(true);
 	}
 	
 	/**
@@ -330,7 +330,16 @@ public class Selection extends BorderPane {
 	 * @param url
 	 */
 	public void convertirFromUrl(String url) {
-		TacheConvertirInstant tacheVideo = new TacheConvertirInstant(url);
+		int bitRate = Integer.parseInt(menuBitRate.getSelectionModel().getSelectedItem().substring(0, 3))*1000;
+		List<String> listeExtensions = new ArrayList<>();
+		if(checkBoxMp3.isSelected())
+			listeExtensions.add("mp3");
+		if(checkBoxMp4.isSelected())
+			listeExtensions.add("mp4");
+		File directory = fileManager.getFolder(stage);
+		if(directory == null)
+			return;
+		TacheConvertirInstant tacheVideo = new TacheConvertirInstant(url, directory, bitRate, listeExtensions);
 		TableViewSelectionModel<Video> defaultSelectionModel = table.getSelectionModel();
 		labelIndicateur.textProperty().unbind();
 		labelIndicateur.textProperty().bind(tacheVideo.messageProperty());

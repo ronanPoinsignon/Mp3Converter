@@ -41,53 +41,62 @@ public class TacheConvertirToFile extends Task<List<File>> {
 	@Override
 	protected List<File> call() {
 		ArrayList<File> listeFichiers = new ArrayList<>();
-		List<Video> listeMauvaisFichiers = new ArrayList<>();
-		int tailleListe = listeVideos.size();
-		boolean hasMp4;
-		int cpt = 0;
-
-		if(folder == null)
-			return new ArrayList<File>();
-		if(listeExtensions.isEmpty())
-			return new ArrayList<File>();
-		hasMp4 = listeExtensions.contains("mp4");
-		File folderMp4 = null;
-		if(hasMp4) {
-			folderMp4 = new File(folder.getPath() + "\\mp4");
-		}
-		else {
-			folderMp4 = new File(folder.getPath() + "\\mp4H");
+		try {
+			List<Video> listeMauvaisFichiers = new ArrayList<>();
+			int tailleListe = listeVideos.size();
+			boolean hasMp4;
+			int cpt = 0;
+	
+			if(folder == null) {
+				return new ArrayList<File>();
+			}
+			if(listeExtensions.isEmpty()) {
+				return new ArrayList<File>();
+			}
+			hasMp4 = listeExtensions.contains("mp4");
+			File folderMp4 = null;
+			if(hasMp4) {
+				folderMp4 = new File(folder.getPath() + "\\mp4");
+			}
+			else {
+				folderMp4 = new File(folder.getPath() + "\\mp4H");
+			}
+			folderMp4.mkdirs();
+			if(hasMp4) {
+				listeExtensions.remove("mp4");
+			}
+			else
+				try {
+					Files.setAttribute(Paths.get(folderMp4.getPath()), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+				} catch (IOException e) {
+					Logger.getInstance().showErrorAlert(e);
+					e.printStackTrace();
+				}
+			for(Video video : listeVideos) {
+				try {
+					listeFichiers.add(this.convertVideo(video, folder, folderMp4, hasMp4));
+				}
+				catch(EncoderException e) {
+					e.printStackTrace();
+					if(!listeMauvaisFichiers.contains(video))
+						listeMauvaisFichiers.add(video);
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					listeMauvaisFichiers.add(video);
+				}
+				this.updateProgress(++cpt, tailleListe);
+			}
+			Logger.getInstance().showErrorAlertIsNotVideoFile(listeMauvaisFichiers);
 			try {
-				Files.setAttribute(Paths.get(folderMp4.getPath()), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+				if(!hasMp4)
+					deleteFile(folderMp4);
 			} catch (IOException e) {
 				Logger.getInstance().showErrorAlert(e);
-				e.printStackTrace();
 			}
 		}
-		folderMp4.mkdirs();
-		if(hasMp4)
-			listeExtensions.remove("mp4");
-		for(Video video : listeVideos) {
-			try {
-				listeFichiers.add(this.convertVideo(video, folder, folderMp4, hasMp4));
-			}
-			catch(EncoderException e) {
-				e.printStackTrace();
-				if(!listeMauvaisFichiers.contains(video))
-					listeMauvaisFichiers.add(video);
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-				listeMauvaisFichiers.add(video);
-			}
-			this.updateProgress(++cpt, tailleListe);
-		}
-		Logger.getInstance().showErrorAlertIsNotVideoFile(listeMauvaisFichiers);
-		try {
-			if(!hasMp4)
-				deleteFile(folderMp4);
-		} catch (IOException e) {
-			Logger.getInstance().showErrorAlert(e);
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 		return listeFichiers;
 	}

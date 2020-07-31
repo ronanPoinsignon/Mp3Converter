@@ -115,23 +115,29 @@ public class Logger {
 	public void showErrorAlertVideosNonChargees(List<String> listeUrlsMauvaisLien, List<String> listeUrlsErreur) {
 		if(listeUrlsErreur.isEmpty() && listeUrlsMauvaisLien.isEmpty())
 			return;
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Un problème est survenu");
-		alert.setHeaderText("Certaines vidéos n'ont pu être chargées");
-		StringBuilder probleme = new StringBuilder();
-		if(!listeUrlsMauvaisLien.isEmpty()) {
-			probleme.append("Les url ci-dessous ne correspondent pas à un lien valide venant de youtube :");
-			for(String url : listeUrlsMauvaisLien)
-				probleme.append("\n\t- " + url);
-		}
-		if(!listeUrlsErreur.isEmpty()) {
-			probleme.append("\nLes urls ci-dessous ont apporté un problème lors de leur chargement :");
-			for(String url : listeUrlsErreur)
-				probleme.append("\n\t- " + url);
-		}
-		alert.setContentText(probleme.toString());
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Un problème est survenu");
+				alert.setHeaderText("Certaines vidéos n'ont pu être chargées");
+				StringBuilder probleme = new StringBuilder();
+				if(!listeUrlsMauvaisLien.isEmpty()) {
+					probleme.append("Les url ci-dessous ne correspondent pas à un lien valide venant de youtube :");
+					for(String url : listeUrlsMauvaisLien)
+						probleme.append("\n\t- " + url);
+				}
+				if(!listeUrlsErreur.isEmpty()) {
+					probleme.append("\nLes urls ci-dessous ont apporté un problème lors de leur chargement :");
+					for(String url : listeUrlsErreur)
+						probleme.append("\n\t- " + url);
+				}
+				alert.setContentText(probleme.toString());
 
-		alert.showAndWait();
+				alert.showAndWait();
+			}
+		});
 	}
 	
 	/**

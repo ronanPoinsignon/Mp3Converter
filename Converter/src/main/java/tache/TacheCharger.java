@@ -45,8 +45,10 @@ public class TacheCharger extends Tache<List<Video>>{
 				if(fichier.exists()) {
 					if(fichier.isFile())
 						listeVideos.add(new VideoFichier(url));
-					else
+					else {
+						System.out.println("else");
 						Logger.getInstance().showWarningAlertIsDIrectory();
+					}
 				}
 				else
 					listeVideos.add(new VideoYtb(url));
@@ -57,7 +59,7 @@ public class TacheCharger extends Tache<List<Video>>{
 				listeUrlsErreur.add(url);
 				e.printStackTrace();
 			} catch(NullPointerException e) {
-				
+				e.printStackTrace();
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

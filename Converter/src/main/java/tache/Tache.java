@@ -43,9 +43,7 @@ public abstract class Tache<T> extends Task<T> {
 			
 			@Override
 			public void run() {
-				System.out.println("bla");
 				Tache.this.fireEvent(event);
-				System.out.println("ble");
 			}
 		});
 	}
