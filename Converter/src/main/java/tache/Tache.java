@@ -16,7 +16,6 @@ public abstract class Tache<T> extends Task<T> {
 	@Override
 	public void updateMessage(String msg) {
 		super.updateMessage(msg);
-		System.out.println("message : " + msg);
 		fireUpdateEvent(new EventTacheUpdateMessage(msg));
 	}
 	

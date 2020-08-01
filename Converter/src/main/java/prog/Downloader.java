@@ -63,7 +63,6 @@ public class Downloader {
 		YoutubeVideo video = downloader.getVideo(videoId);
 
 		List<AudioVideoFormat> videoWithAudioFormats = video.videoWithAudioFormats();
-		videoWithAudioFormats.forEach(vid -> System.out.println("qualité : " + vid.videoQuality()));
 		
 		Format format = null;
 		if(goodVideo)

@@ -46,7 +46,6 @@ public class TacheCharger extends Tache<List<Video>>{
 					if(fichier.isFile())
 						listeVideos.add(new VideoFichier(url));
 					else {
-						System.out.println("else");
 						Logger.getInstance().showWarningAlertIsDIrectory();
 					}
 				}

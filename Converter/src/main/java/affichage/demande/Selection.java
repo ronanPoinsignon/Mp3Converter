@@ -162,7 +162,7 @@ public class Selection extends BorderPane {
 		this.setBottom(gridProgression);
 		labelIndicateur.setPadding(new Insets(0,0,0,30));
 		gridProgression.setPadding(new Insets(10,0,0,10));
-		boutonConvertirUne.setDisable(true);
+		//boutonConvertirUne.setDisable(true);
 	}
 	
 	/**
