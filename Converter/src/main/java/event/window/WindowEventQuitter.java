@@ -16,7 +16,8 @@ public class WindowEventQuitter extends WindowEventHandler {
 
 	@Override
 	public void handle(WindowEvent event) {
-		selection.quitter();
+		if(!selection.quitter())
+			event.consume();
 	}
 
 }

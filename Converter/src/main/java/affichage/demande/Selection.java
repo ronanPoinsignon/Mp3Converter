@@ -162,7 +162,6 @@ public class Selection extends BorderPane {
 		this.setBottom(gridProgression);
 		labelIndicateur.setPadding(new Insets(0,0,0,30));
 		gridProgression.setPadding(new Insets(10,0,0,10));
-		//boutonConvertirUne.setDisable(true);
 	}
 	
 	/**
@@ -453,14 +452,13 @@ public class Selection extends BorderPane {
 	 * Quitte l'application en demandant une confirmation si 
 	 * l'utilisateur n'a pas sauvegardé son travail.
 	 */
-	public void quitter() {
+	public boolean quitter() {
 		if(gestionnaire.canSave()) {
-			if(logger.canQuit()) {
-				System.exit(0);
+			if(!logger.canQuit()) {
+				return false;
 			}
-			return;
 		}
-		System.exit(0);
+		return true;
 	}
 	
 	/**

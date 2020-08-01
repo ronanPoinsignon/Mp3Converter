@@ -35,12 +35,8 @@ public class TacheConvertirInstant extends Tache<Video> {
 	@Override
 	protected Video call() throws Exception {
 		TacheCharger tache = new TacheCharger(url);
-		/*tache.addEventHandler(EventTacheUpdateProgress.EVENT_UPDATE_PROGRESS, new EventHandlerTacheUpdateProgress() {
-			@Override
-			public void onUpdateProgress(long workDone, long max) {
-				TacheConvertirInstant.this.updateProgress(workDone, max);
-			}
-		});*/
+    	TacheConvertirToFile tacheConv = new TacheConvertirToFile(listeVideos, folder, bitRate, listeExtensions);
+    	
 		tache.addEventHandler(EventTacheUpdateMessage.EVENT_UPDATE_MESSAGE, new EventHandlerTacheUpdateMessage() {
 			@Override
 			public void onUpdateMessage(String message) {
@@ -50,27 +46,30 @@ public class TacheConvertirInstant extends Tache<Video> {
 		tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent t) {
-                listeVideos = tache.getValue();
+            	List<Video> liste = tache.getValue();
+                listeVideos.addAll(liste);
                 if(!listeVideos.isEmpty()) {
-                	TacheConvertirToFile tacheConv = new TacheConvertirToFile(listeVideos, folder, bitRate, listeExtensions);
-                	tacheConv.addEventHandler(EventTacheUpdateMessage.EVENT_UPDATE_MESSAGE, new EventHandlerTacheUpdateMessage() {
-            			@Override
-            			public void onUpdateMessage(String message) {
-            				TacheConvertirInstant.this.updateMessage(message);
-            			}
-            		});
-                	tacheConv.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
-                        @Override
-                        public void handle(WorkerStateEvent t) {
-                        	TacheConvertirInstant.this.updateMessage("Vidéo convertie");
-                        	TacheConvertirInstant.this.updateProgress(1, 1);
-                        }
-                	});
                 	new Thread(tacheConv).start();
                 }
         		Logger.getInstance().showErrorAlertVideosNonChargees(tache.getListeUrlsMauvaisLien(), tache.getListeUrlsErreur());
             }
         });
+		
+
+    	tacheConv.addEventHandler(EventTacheUpdateMessage.EVENT_UPDATE_MESSAGE, new EventHandlerTacheUpdateMessage() {
+			@Override
+			public void onUpdateMessage(String message) {
+				TacheConvertirInstant.this.updateMessage(message);
+			}
+		});
+    	tacheConv.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent t) {
+            	TacheConvertirInstant.this.updateMessage("Vidéo convertie");
+            	TacheConvertirInstant.this.updateProgress(1, 1);
+            }
+    	});
+		
 		new Thread(tache).start();
 		return null;
 	}
