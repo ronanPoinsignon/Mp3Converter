@@ -23,6 +23,7 @@ import event.action.ActionEventSave;
 import event.action.ActionEventSaveSous;
 import event.clavier.ClavierEventHandler;
 import event.mouse.MouseEventAjout;
+import event.mouse.MouseEventAjoutPlaylist;
 import event.mouse.MouseEventConversion;
 import event.mouse.MouseEventConversionInstantannee;
 import event.mouse.MouseEventSuppression;
@@ -52,8 +53,10 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import log.Logger;
 import prog.Downloader;
+import prog.Utils;
 import prog.video.Video;
 import tache.TacheCharger;
+import tache.TacheChargerPlaylist;
 import tache.TacheConvertirInstant;
 import tache.TacheConvertirToFile;
 
@@ -77,7 +80,8 @@ public class Selection extends BorderPane {
 	private Button boutonAjout = new Button("Ajouter"),
 			boutonSuppression = new Button("Supprimer"),
 			boutonConvertir = new Button("Convertir"),
-			boutonConvertirUne = new Button("Convertir Une");
+			boutonConvertirUne = new Button("Convertir Une"),
+			boutonAjouterPlaylist = new Button("Ajouter Playlist");
 	private CheckBox checkBoxMp3 = new CheckBox("Mp3"),
 			checkBoxMp4 = new CheckBox("Mp4");
 	private ChoiceBox<String> menuBitRate = new ChoiceBox<>();
@@ -147,6 +151,7 @@ public class Selection extends BorderPane {
 		gridBouton.add(checkBoxMp3, 0, 4);
 		gridBouton.add(checkBoxMp4, 0, 5);
 		gridBouton.add(boutonConvertirUne, 0, 6);
+		gridBouton.add(boutonAjouterPlaylist, 0, 7);
 		GridPane gridTotal = new GridPane();
 		gridTotal.add(table, 0, 0);
 		gridTotal.add(gridBouton, 1, 0);
@@ -173,6 +178,7 @@ public class Selection extends BorderPane {
 		boutonSuppression.setOnMouseClicked(new MouseEventSuppression(this));
 		boutonConvertir.setOnMouseClicked(new MouseEventConversion(this));
 		boutonConvertirUne.setOnMouseClicked(new MouseEventConversionInstantannee(this));
+		boutonAjouterPlaylist.setOnMouseClicked(new MouseEventAjoutPlaylist(this));
 		
 		itemSave.setOnAction(new ActionEventSave(this));
 		itemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
@@ -267,6 +273,44 @@ public class Selection extends BorderPane {
 		colonneLien.setSortable(false);
 		table.getColumns().add(colonneTitre);
 		table.getColumns().add(colonneLien);
+	}
+	
+	public void ajouterPlaylist(String id) {
+		id = Utils.getPlaylistId(id);
+		System.out.println(id);
+		//"PLFNlXTBp7USwpAZAiiAT_DP828Y6fmU_M"
+		if(id == null || id.isEmpty())
+			return;
+		TacheChargerPlaylist tache = new TacheChargerPlaylist(id);
+		labelIndicateur.textProperty().unbind();
+		labelIndicateur.textProperty().bind(tache.messageProperty());
+		indicateur.progressProperty().unbind();
+		indicateur.progressProperty().bind(tache.progressProperty());
+		final String idFinal = id;
+		tache.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED,
+                new EventHandler<WorkerStateEvent>() {
+			 
+            @Override
+            public void handle(WorkerStateEvent t) {
+                List<Video> listeVideos = tache.getValue();
+        		labelIndicateur.textProperty().unbind();
+        		labelIndicateur.setText(listeVideos.size() + " vidéo(s) chargée(s)");
+        		if(tache.hasPb()) {
+        			Logger.getInstance().showWarningAlertIsNotPlaylistId(idFinal);
+        		}
+        		if(!tache.getLinkError().isEmpty()) {
+        			Logger.getInstance().showErrorAlertVideoError(listeVideos);
+        		}
+                if(!listeVideos.isEmpty()) {
+	        		gestionnaire.addCommande(new CommandeAjout(table, listeVideos));
+	        		gestionnaire.executer();
+                }
+                updateActionPossibleGestionnaire();
+            }
+        });
+		Thread th = new Thread(tache);
+		th.setDaemon(true);
+		th.start();
 	}
 	
 	/**

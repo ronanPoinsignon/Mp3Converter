@@ -53,8 +53,20 @@ public class Utils {
 		return id;
 	}
 	
+	public static String getPlaylistId(String url) {
+		String id = Utils.getQueryMap(url).get("list");
+		if(id == null) {
+			id = url.substring(url.lastIndexOf("/") + 1);
+		};
+		if(id == null) {
+			id = url;
+		}
+		return id;
+	}
+	
 	/**
-	 * Affiche une boîte de dialogue pour permettre l'ajout d'une nouvelle vidéos Youtube en donnant le lien de celle-ci.
+	 * Affiche une boîte de dialogue pour permettre l'ajout d'une nouvelle vidéos Youtube en 
+	 * donnant le lien de celle-ci.
 	 * @return
 	 * @throws PasDeResultatException
 	 */
@@ -70,6 +82,12 @@ public class Utils {
 		throw new PasDeResultatException();
 	}
 	
+	/**
+	 * Retourne une chaîne de caractère ne contenant pas de caractères problématiques pour la 
+	 * création de fichiers / dossiers.
+	 * @param title
+	 * @return
+	 */
 	public static String getVideoTitleWithoutIllegalChar(String title) {
 		Arrays.sort(illegalFileChars);
 		StringBuilder newTitle = new StringBuilder();

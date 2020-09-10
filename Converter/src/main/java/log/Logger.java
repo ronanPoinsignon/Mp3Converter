@@ -250,7 +250,7 @@ public class Logger {
 	 * @param listeVideos
 	 */
 	public void showWarningAlertIsNotVideoFile(List<Video> listeVideos) {
-		if(listeVideos.isEmpty())
+		if(listeVideos == null || listeVideos.isEmpty())
 			return;
 		Platform.runLater(new Runnable() {
 			@Override
@@ -273,6 +273,58 @@ public class Logger {
 				alert.setContentText(liens.toString());
 
 				alert.showAndWait();
+			}
+		});
+	}
+	
+	public void showErrorAlertVideoError(List<Video> listeVideos) {
+		if(listeVideos == null || listeVideos.isEmpty())
+			return;
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+
+				Alert alert = null;
+				try {
+					alert = new Alert(AlertType.ERROR);
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					return;
+				}
+				alert.setTitle("Un problème est apparut.");
+				alert.setHeaderText("Certaines vidéos n'ont pu être chargées.");
+				StringBuilder liens = new StringBuilder("Les vidéos en questions sont listées ci-dessous :");
+				for(Video video : listeVideos) {
+					liens.append("\n\t- " + video.getTitre());
+				}
+				alert.setContentText(liens.toString());
+
+				alert.showAndWait();
+			}
+		});
+	}
+	
+	public void showWarningAlertIsNotPlaylistId(String id) {
+		if(id == null)
+			return;
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				Alert alert = null;
+				try {
+					alert = new Alert(AlertType.ERROR);
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					return;
+				}
+				alert.setTitle("Aucune playlist trouvé");
+				alert.setHeaderText("Le lien ou l'id donné n'aboutit sur aucune playlist youtube");
+				alert.setContentText("Le lien n'est peut-être pas valide");
+
+				alert.showAndWait();			
 			}
 		});
 	}

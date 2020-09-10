@@ -9,6 +9,11 @@ import ws.schild.jave.EncodingAttributes;
 import ws.schild.jave.InputFormatException;
 import ws.schild.jave.MultimediaObject;
 
+/**
+ * Convertisseur pour la création de fichiers mp3.
+ * @author ronan
+ *
+ */
 public class ConvertisseurMusique extends Convertisseur {
 	
 	public ConvertisseurMusique(int audioBitRate) {
