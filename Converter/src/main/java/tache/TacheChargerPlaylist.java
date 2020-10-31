@@ -27,7 +27,6 @@ public class TacheChargerPlaylist extends Tache<List<Video>> {
 	protected List<Video> call() throws Exception {
 		this.updateMessage("Téléchargement des vidéos");
 		YoutubeDownloader downloader = new YoutubeDownloader();
-		System.out.println("oui avant");
 		YoutubePlaylist playlist = null;
 		List<Video> liste = new ArrayList<>();
 		try {
@@ -39,7 +38,6 @@ public class TacheChargerPlaylist extends Tache<List<Video>> {
 			this.updateProgress(1, 1);
 			return liste;
 		}
-		System.out.println("oui apres");
 		List<PlaylistVideoDetails> videos = playlist.videos();
 		int i = 0, max = videos.size();
 		for(PlaylistVideoDetails video : videos) {

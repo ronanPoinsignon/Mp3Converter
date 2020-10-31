@@ -20,7 +20,7 @@ public class CommandeInversion extends Commande {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean executer() {
 		try {
 			Collections.swap(table.getItems(), inv1, inv2);
 			return true;
@@ -42,7 +42,7 @@ public class CommandeInversion extends Commande {
 	}
 
 	@Override
-	public boolean reexecute() {
+	public boolean reexecuter() {
 		try {
 			Collections.swap(table.getItems(), inv1, inv2);
 			return true;

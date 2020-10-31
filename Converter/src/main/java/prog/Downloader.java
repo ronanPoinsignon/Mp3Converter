@@ -16,6 +16,8 @@ import com.github.kiulian.downloader.model.formats.AudioVideoFormat;
 import com.github.kiulian.downloader.model.formats.Format;
 import com.github.kiulian.downloader.model.quality.VideoQuality;
 
+import exception.NoVideoFoundException;
+
 /**
  * Classe permettant le téléchargement de vidéos Youtube.
  * @author ronan
@@ -34,13 +36,14 @@ public class Downloader {
 	 * @return
 	 * @throws YoutubeException
 	 * @throws IOException
+	 * @throws NoVideoFoundException 
 	 */
-	public File download(File folder, String url, boolean goodVideo) throws YoutubeException, IOException {
+	public File download(File folder, String url, boolean goodVideo) throws YoutubeException, IOException, NoVideoFoundException {
 		String id = Utils.getvideoId(url);
 		return downloadFromId(folder, id, null, goodVideo);
 	}
 	
-	public File download(File folder, String url, String title, boolean goodVideo) throws YoutubeException, IOException {
+	public File download(File folder, String url, String title, boolean goodVideo) throws YoutubeException, IOException, NoVideoFoundException {
 		String id = Utils.getvideoId(url);
 		return downloadFromId(folder, id, title, goodVideo);
 	}
@@ -53,29 +56,29 @@ public class Downloader {
 	 * @return
 	 * @throws YoutubeException
 	 * @throws IOException
+	 * @throws NoVideoFoundException 
 	 */
-	public File downloadFromId(File folder, String videoId, String title, boolean goodVideo) throws YoutubeException, IOException {
+	public File downloadFromId(File folder, String videoId, String title, boolean goodVideo) throws YoutubeException, IOException, NoVideoFoundException {
 		YoutubeDownloader downloader = new YoutubeDownloader();
-		downloader.addCipherFunctionPattern(2, "\\b([a-zA-Z0-9$]{2})\\s*=\\s*function\\(\\s*a\\s*\\)\\s*\\{\\s*a\\s*=\\s*a\\.split\\(\\s*\"\"\\s*\\)");
-		downloader.setParserRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+		//downloader.addCipherFunctionPattern(2, "\\b([a-zA-Z0-9$]{2})\\s*=\\s*function\\(\\s*a\\s*\\)\\s*\\{\\s*a\\s*=\\s*a\\.split\\(\\s*\"\"\\s*\\)");
+		//downloader.setParserRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
 		downloader.setParserRetryOnFailure(1);
 
 		YoutubeVideo video = downloader.getVideo(videoId);
 
 		List<AudioVideoFormat> videoWithAudioFormats = video.videoWithAudioFormats();
-		
 		Format format = null;
 		if(goodVideo)
-			format = getMaxVideoQuality(videoWithAudioFormats);
+			format = getMaxVideoQuality(videoWithAudioFormats); //return the better video quality -> throw NoVideoFoundException if no video found
 		else
-			format = getMinVideoQuality(videoWithAudioFormats);
+			format = getMinVideoQuality(videoWithAudioFormats); //return the worst video quality -> throw NoVideoFoundException if no video found
 		URL website = new URL(format.url());
 		String titre = title;
-		if(titre == null || titre.isEmpty())
+		if(titre == null)
 			titre = video.details().title();
 		if(!folder.exists())
 			folder.mkdirs();
-		titre = Utils.getVideoTitleWithoutIllegalChar(titre);
+		titre = Utils.removeIllegalChars(titre);
 		File fichierVideo = new File(folder.getPath() + "\\" + titre + ".mp4");
 		try (InputStream in = website.openStream()) {
 		    Files.copy(in, fichierVideo.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -83,7 +86,7 @@ public class Downloader {
 		return fichierVideo;
 	}
 	
-	public Format getMaxVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) {
+	public Format getMaxVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) throws NoVideoFoundException {
 		List<Format> listeFormat = new ArrayList<>();
 		VideoQuality[] tabQuality = VideoQuality.values();
 		for(VideoQuality quality : tabQuality) {
@@ -99,10 +102,10 @@ public class Downloader {
 		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.noVideo).forEach(listeFormat::add);
 		if(!listeFormat.isEmpty())
 			return listeFormat.get(0);
-		return null;
+		throw new NoVideoFoundException();
 	}
 	
-	public Format getMinVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) {
+	public Format getMinVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) throws NoVideoFoundException {
 		List<Format> listeFormat = new ArrayList<>();
 		VideoQuality[] tabQuality = inverser(VideoQuality.values());
 		for(VideoQuality quality : tabQuality) {
@@ -118,7 +121,7 @@ public class Downloader {
 		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.noVideo).forEach(listeFormat::add);
 		if(!listeFormat.isEmpty())
 			return listeFormat.get(0);
-		return null;
+		throw new NoVideoFoundException();
 	}
 	
 	public VideoQuality[] inverser(VideoQuality[] tabQuality) {

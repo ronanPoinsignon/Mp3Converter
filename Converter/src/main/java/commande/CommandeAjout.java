@@ -18,7 +18,7 @@ public class CommandeAjout extends CommandeListe {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean executer() {
 		List<Video> listeVideosDejaPresentes = table.addAll(listeVideos);
 		listeVideos.removeAll(listeVideosDejaPresentes);
 		Logger.getInstance().showWarningAlertVideosDejaPresentes(listeVideosDejaPresentes);
@@ -32,7 +32,7 @@ public class CommandeAjout extends CommandeListe {
 	}
 
 	@Override
-	public boolean reexecute() {
+	public boolean reexecuter() {
 		table.addAll(listeVideos);
 		return !listeVideos.isEmpty();
 	}

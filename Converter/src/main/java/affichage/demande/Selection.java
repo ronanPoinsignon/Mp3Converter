@@ -28,6 +28,7 @@ import event.mouse.MouseEventConversion;
 import event.mouse.MouseEventConversionInstantannee;
 import event.mouse.MouseEventSuppression;
 import event.window.WindowEventQuitter;
+import exception.NoVideoFoundException;
 import fichier.DirectoryChooserManager;
 import fichier.FileManager;
 import javafx.concurrent.WorkerStateEvent;
@@ -277,7 +278,6 @@ public class Selection extends BorderPane {
 	
 	public void ajouterPlaylist(String id) {
 		id = Utils.getPlaylistId(id);
-		System.out.println(id);
 		//"PLFNlXTBp7USwpAZAiiAT_DP828Y6fmU_M"
 		if(id == null || id.isEmpty())
 			return;
@@ -404,6 +404,8 @@ public class Selection extends BorderPane {
 					downloader.download(FileManager.getInstance().getFolder(stage), url, false);
 				} catch (YoutubeException | IOException e) {
 					e.printStackTrace();
+				} catch (NoVideoFoundException e) {
+					Logger.getInstance().showErrorAlertNoVideoFound();
 				}
             }
         });

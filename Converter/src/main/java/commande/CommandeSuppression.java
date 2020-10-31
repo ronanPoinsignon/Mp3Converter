@@ -21,7 +21,7 @@ public class CommandeSuppression extends CommandeListe {
 	}
 	
 	@Override
-	public boolean execute() {
+	public boolean executer() {
 		for(Video video : listeVideos) {
 			listeIndex.add(table.getItems().indexOf(video));
 		}
@@ -50,7 +50,7 @@ public class CommandeSuppression extends CommandeListe {
 	}
 
 	@Override
-	public boolean reexecute() {
+	public boolean reexecuter() {
 		for(Video video : listeVideos) {
 			listeIndex.add(table.getItems().indexOf(video));
 		}

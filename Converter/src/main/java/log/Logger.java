@@ -277,6 +277,34 @@ public class Logger {
 		});
 	}
 	
+	public void showErrorAlertNoVideoFound(List<Video> listeVideos) {
+		if(listeVideos == null || listeVideos.isEmpty())
+			return;
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+
+				Alert alert = null;
+				try {
+					alert = new Alert(AlertType.ERROR);
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					return;
+				}
+				alert.setTitle("Les fichiers suivant ne donne sur aucune vidéo");
+				alert.setHeaderText("Les fichiers que vous avez donné ne renvoie sur aucune vidéo téléchageable.");
+				StringBuilder liens = new StringBuilder("Youtube a peut-être des soucis.");
+				for(Video video : listeVideos) {
+					liens.append("\n\t- " + video.getTitre());
+				}
+				alert.setContentText(liens.toString());
+
+				alert.showAndWait();
+			}
+		});
+	}
+	
 	public void showErrorAlertVideoError(List<Video> listeVideos) {
 		if(listeVideos == null || listeVideos.isEmpty())
 			return;
@@ -300,6 +328,21 @@ public class Logger {
 				}
 				alert.setContentText(liens.toString());
 
+				alert.showAndWait();
+			}
+		});
+	}
+	
+	public void showErrorAlertNoVideoFound() {
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.getDialogPane().setMinWidth(700);
+				alert.setTitle("Aucune vidéo trouvée.");
+				alert.setHeaderText("Le lien ne donne sur aucune vidéo téléchargeable");
+				alert.setContentText("Le lien que vous avez donné correspond bien à une vidéo youtube mais aucune vidéo n'a pu être trouvée. L'erreur provient peut-être de youtube.");
 				alert.showAndWait();
 			}
 		});

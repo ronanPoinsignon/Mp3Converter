@@ -20,7 +20,7 @@ public class CommandeReset extends CommandeListe {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean executer() {
 		if(table.getItems().equals(listeVideos))
 			return false;
 		listeVideosSupprimees = table.removeAll();
@@ -36,7 +36,7 @@ public class CommandeReset extends CommandeListe {
 	}
 
 	@Override
-	public boolean reexecute() {
+	public boolean reexecuter() {
 		listeVideosSupprimees = table.removeAll();
 		table.addAll(listeVideos);
 		return !listeVideos.isEmpty();

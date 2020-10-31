@@ -7,26 +7,12 @@ import affichage.demande.TableVideo;
  * @author ronan
  *
  */
-public abstract class Commande {
+public abstract class Commande implements CommandeInterface {
 	
 	protected TableVideo table;
 	
 	public Commande(TableVideo table) {
 		this.table = table;
 	}
-
-	/**
-	 * Execute la commande.
-	 */
-	public abstract boolean execute();
 	
-	/**
-	 * Annule l'exécution
-	 */
-	public abstract boolean annuler();
-	
-	/**
-	 * Réexécute la commande après annulation de celle-ci.
-	 */
-	public abstract boolean reexecute();
 }

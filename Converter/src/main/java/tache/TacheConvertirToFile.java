@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import exception.NoVideoFoundException;
 import javafx.concurrent.Task;
 import log.Logger;
 import prog.Utils;
@@ -43,6 +44,7 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		ArrayList<File> listeFichiers = new ArrayList<>();
 		try {
 			List<Video> listeMauvaisFichiers = new ArrayList<>();
+			List<Video> listeVideoSansTelechargement = new ArrayList<>();
 			int tailleListe = listeVideos.size();
 			boolean hasMp4;
 			int cpt = 0;
@@ -81,6 +83,10 @@ public class TacheConvertirToFile extends Task<List<File>> {
 					if(!listeMauvaisFichiers.contains(video))
 						listeMauvaisFichiers.add(video);
 				}
+				catch(NoVideoFoundException e) {
+					e.printStackTrace();
+					listeVideoSansTelechargement.add(video);
+				}
 				catch(Exception e) {
 					e.printStackTrace();
 					listeMauvaisFichiers.add(video);
@@ -88,6 +94,7 @@ public class TacheConvertirToFile extends Task<List<File>> {
 				this.updateProgress(++cpt, tailleListe);
 			}
 			Logger.getInstance().showWarningAlertIsNotVideoFile(listeMauvaisFichiers);
+			Logger.getInstance().showErrorAlertNoVideoFound(listeVideoSansTelechargement);
 			try {
 				if(!hasMp4)
 					deleteFile(folderMp4);
@@ -141,7 +148,7 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		else
 			fichierMp4 = video.convertToMp4(folderMp4);
 		listeMp4.add(fichierMp4);
-		String titre = Utils.getVideoTitleWithoutIllegalChar(video.getTitre());
+		String titre = Utils.removeIllegalChars(video.getTitre());
 		for(String extension : listeExtensions) {
 			this.updateMessage("conversion de " + titre + " en " + extension);
 			File folderVideo = new File(folder + "\\" + extension.toLowerCase());

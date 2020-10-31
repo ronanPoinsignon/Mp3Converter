@@ -7,6 +7,7 @@ import com.github.kiulian.downloader.YoutubeDownloader;
 import com.github.kiulian.downloader.YoutubeException;
 
 import affichage.demande.TableVideo;
+import exception.NoVideoFoundException;
 import prog.Downloader;
 import prog.Utils;
 
@@ -27,8 +28,8 @@ public class VideoYtb extends Video {
 	
 	public VideoYtb(String url) throws YoutubeException, IOException {
 		YoutubeDownloader downloader = new YoutubeDownloader();
-		downloader.addCipherFunctionPattern(2, "\\b([a-zA-Z0-9$]{2})\\s*=\\s*function\\(\\s*a\\s*\\)\\s*\\{\\s*a\\s*=\\s*a\\.split\\(\\s*\"\"\\s*\\)");
-		downloader.setParserRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+		//downloader.addCipherFunctionPattern(2, "\\b([a-zA-Z0-9$]{2})\\s*=\\s*function\\(\\s*a\\s*\\)\\s*\\{\\s*a\\s*=\\s*a\\.split\\(\\s*\"\"\\s*\\)");
+		//downloader.setParserRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
 		downloader.setParserRetryOnFailure(1);
 		this.lien = url;
 		this.id = Utils.getvideoId(url);
@@ -36,16 +37,15 @@ public class VideoYtb extends Video {
 	}
 
 	@Override
-	public File convertToMp4(File folder) throws YoutubeException, IOException {
+	public File convertToMp4(File folder) throws YoutubeException, IOException, NoVideoFoundException {
 		Downloader downloader = new Downloader();
 		return downloader.download(folder, id, titre, false);
 	}
 	
 	@Override
-	public File convertToMp4GoodQuality(File folder) throws YoutubeException, IOException {
+	public File convertToMp4GoodQuality(File folder) throws YoutubeException, IOException, NoVideoFoundException {
 		Downloader downloader = new Downloader();
-		File fichier = downloader.download(folder, id, titre, true);
-		return fichier;
+		return downloader.download(folder, id, titre, true);
 	}
 
 	/**

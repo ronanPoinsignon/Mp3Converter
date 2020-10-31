@@ -19,10 +19,10 @@ public class Gestionnaire {
 		return gestionnaire;
 	}
 	
-	private ArrayList<Commande> listeCommandes = new ArrayList<Commande>();
-	private ArrayList<Commande> listeCommandesEffectuees = new ArrayList<Commande>();
-	private ArrayList<Commande> listeCommandesAnnulees = new ArrayList<Commande>();
-	private ArrayList<Commande> listeCommandesAReexecuteer = new ArrayList<Commande>();
+	private ArrayList<CommandeInterface> listeCommandes = new ArrayList<CommandeInterface>();
+	private ArrayList<CommandeInterface> listeCommandesEffectuees = new ArrayList<CommandeInterface>();
+	private ArrayList<CommandeInterface> listeCommandesAnnulees = new ArrayList<CommandeInterface>();
+	private ArrayList<CommandeInterface> listeCommandesAReexecuteer = new ArrayList<CommandeInterface>();
 	
 	private int cptActions = 0;
 	
@@ -43,8 +43,8 @@ public class Gestionnaire {
 	 * Exécute la prochaine commande de la liste des commandes à faire.
 	 */
 	public Gestionnaire executer() {
-		Commande commande = listeCommandes.remove(0);
-		if(commande.execute()) {
+		CommandeInterface commande = listeCommandes.remove(0);
+		if(commande.executer()) {
 			listeCommandesEffectuees.add(commande);
 			listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
 			cptActions++;
@@ -56,8 +56,8 @@ public class Gestionnaire {
 	 * Exécute toute les commandes de la liste des commandes à faire.
 	 */
 	public Gestionnaire executerAll() {
-		for(Commande commande : listeCommandes) {
-			if(commande.execute()) {
+		for(CommandeInterface commande : listeCommandes) {
+			if(commande.executer()) {
 				listeCommandesEffectuees.add(commande);
 				listeCommandes.remove(commande);
 				cptActions++;
@@ -76,8 +76,8 @@ public class Gestionnaire {
 	public Gestionnaire executer(Commande commande) throws CommandeNonTrouveeException {
 		if(!listeCommandes.contains(commande))
 			throw new CommandeNonTrouveeException();
-		if(commande.execute()) {
-			commande.execute();
+		if(commande.executer()) {
+			commande.executer();
 			listeCommandes.remove(commande);
 			listeCommandesEffectuees.add(commande);
 			listeCommandesAReexecuteer.removeAll(listeCommandes);
@@ -87,7 +87,7 @@ public class Gestionnaire {
 	}
 	
 	public Gestionnaire executerInstant(Commande commande) {
-		commande.execute();
+		commande.executer();
 		return this;
 	}
 	
@@ -95,7 +95,7 @@ public class Gestionnaire {
 	 * Annule la dernière commande effectuée.
 	 */
 	public Gestionnaire annuler() {
-		Commande commande = listeCommandesEffectuees.remove(listeCommandesEffectuees.size() - 1);
+		CommandeInterface commande = listeCommandesEffectuees.remove(listeCommandesEffectuees.size() - 1);
 		if(commande.annuler()) {
 			listeCommandesAnnulees.add(commande);
 			listeCommandesAReexecuteer.add(commande);
@@ -108,8 +108,8 @@ public class Gestionnaire {
 	 * Réexécute la commande annulée.
 	 */
 	public Gestionnaire reexecuter() {
-		Commande commande = listeCommandesAReexecuteer.remove(listeCommandesAReexecuteer.size() - 1);
-		if(commande.reexecute()) {
+		CommandeInterface commande = listeCommandesAReexecuteer.remove(listeCommandesAReexecuteer.size() - 1);
+		if(commande.reexecuter()) {
 			listeCommandesEffectuees.add(commande);
 			cptActions++;
 		}
