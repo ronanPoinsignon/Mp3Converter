@@ -3,6 +3,7 @@ package affichage.demande;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,8 +47,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
@@ -56,6 +60,7 @@ import log.Logger;
 import prog.Downloader;
 import prog.Utils;
 import prog.video.Video;
+import prog.video.VideoFichier;
 import tache.TacheCharger;
 import tache.TacheChargerPlaylist;
 import tache.TacheConvertirInstant;
@@ -69,7 +74,7 @@ import tache.TacheConvertirToFile;
 public class Selection extends BorderPane {
 
 	private static final double TAILLE_BOUTON = 100;
-	
+	private static final String[] extensions = new String[] {"webm", "mp4"};
 	private final ProgressIndicator indicateur = new ProgressIndicator(0);
 	private final Label labelIndicateur = new Label("");
 	
@@ -205,6 +210,48 @@ public class Selection extends BorderPane {
 		itemRaccourcis.setAccelerator(KeyCombination.keyCombination("Ctrl+H"));
 		
 		this.stage.setOnCloseRequest(new WindowEventQuitter(this));
+		
+		table.setOnDragOver(new EventHandler<DragEvent>() {
+
+            @Override
+            public void handle(DragEvent event) {
+                if (event.getDragboard().hasFiles()) {
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+                event.consume();
+            }
+        });
+
+        table.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasFiles()) {
+                	System.out.println("oui");
+                    success = true;
+                    List<File> listeFichiers = db.getFiles();
+                    List<Video> listeVideos = new ArrayList<>();
+                    for (File fichier : listeFichiers) {
+                    	if(checkExtension(fichier.getPath()))
+                    		listeVideos.add(new VideoFichier(fichier.getPath()));						
+					}
+                    gestionnaire.addCommande(new CommandeAjout(table, listeVideos)).executer();
+                    updateActionPossibleGestionnaire();
+                }
+                /* let the source know whether the string was successfully 
+                 * transferred and used */
+                event.setDropCompleted(success);
+                
+                event.consume();
+            }
+        });
+	}
+	
+	private boolean checkExtension(String filePath) {
+		System.out.println(Arrays.asList(extensions));
+		System.out.println(filePath.substring(filePath.lastIndexOf(".")) + 1);
+		return Arrays.asList(extensions).contains(filePath.substring(filePath.lastIndexOf(".") + 1));
 	}
 	
 	/**

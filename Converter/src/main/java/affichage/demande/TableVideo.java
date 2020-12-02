@@ -19,6 +19,7 @@ public class TableVideo extends TableView<Video> {
 		
 	}
 	
+	
 	/**
 	 * Ajoute la vidéo dans la liste. Renvoie une erreur si la vidéo est déjà présente.
 	 * Renvoie TRUE si l'insertion a fonctionné.
