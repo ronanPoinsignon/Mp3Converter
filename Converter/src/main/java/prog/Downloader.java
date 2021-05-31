@@ -26,9 +26,9 @@ import exception.NoVideoFoundException;
 public class Downloader {
 
 	public Downloader() {
-		
+
 	}
-	
+
 	/**
 	 * Prépare le téléchargement.
 	 * @param folder
@@ -36,27 +36,27 @@ public class Downloader {
 	 * @return
 	 * @throws YoutubeException
 	 * @throws IOException
-	 * @throws NoVideoFoundException 
+	 * @throws NoVideoFoundException
 	 */
 	public File download(File folder, String url, boolean goodVideo) throws YoutubeException, IOException, NoVideoFoundException {
 		String id = Utils.getvideoId(url);
 		return downloadFromId(folder, id, null, goodVideo);
 	}
-	
+
 	public File download(File folder, String url, String title, boolean goodVideo) throws YoutubeException, IOException, NoVideoFoundException {
 		String id = Utils.getvideoId(url);
 		return downloadFromId(folder, id, title, goodVideo);
 	}
-	
+
 	/**
-	 * Télécharge la vidéo Youtube en donnant le dossier de sauvegarde de la vidéo 
+	 * Télécharge la vidéo Youtube en donnant le dossier de sauvegarde de la vidéo
 	 * ainsi que l'id de la vidéo à aller télécharger sur Youtube.
 	 * @param folder
 	 * @param videoId
 	 * @return
 	 * @throws YoutubeException
 	 * @throws IOException
-	 * @throws NoVideoFoundException 
+	 * @throws NoVideoFoundException
 	 */
 	public File downloadFromId(File folder, String videoId, String title, boolean goodVideo) throws YoutubeException, IOException, NoVideoFoundException {
 		YoutubeDownloader downloader = new YoutubeDownloader();
@@ -68,62 +68,72 @@ public class Downloader {
 
 		List<AudioVideoFormat> videoWithAudioFormats = video.videoWithAudioFormats();
 		Format format = null;
-		if(goodVideo)
+		if(goodVideo) {
 			format = getMaxVideoQuality(videoWithAudioFormats); //return the better video quality -> throw NoVideoFoundException if no video found
-		else
+		}
+		else {
 			format = getMinVideoQuality(videoWithAudioFormats); //return the worst video quality -> throw NoVideoFoundException if no video found
+		}
 		URL website = new URL(format.url());
 		String titre = title;
-		if(titre == null)
+		if(titre == null) {
 			titre = video.details().title();
-		if(!folder.exists())
+		}
+		if(!folder.exists()) {
 			folder.mkdirs();
+		}
 		titre = Utils.removeIllegalChars(titre);
-		File fichierVideo = new File(folder.getPath() + "\\" + titre + ".mp4");
+		File fichierVideo = new File(folder.getPath() + File.separator + titre + ".mp4");
 		try (InputStream in = website.openStream()) {
-		    Files.copy(in, fichierVideo.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(in, fichierVideo.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 		return fichierVideo;
 	}
-	
+
 	public Format getMaxVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) throws NoVideoFoundException {
 		List<Format> listeFormat = new ArrayList<>();
 		VideoQuality[] tabQuality = VideoQuality.values();
 		for(VideoQuality quality : tabQuality) {
 			if(quality != VideoQuality.unknown && quality != VideoQuality.noVideo) {
 				videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == quality).forEach(listeFormat::add);
-				if(!listeFormat.isEmpty())
+				if(!listeFormat.isEmpty()) {
 					return listeFormat.get(0);
+				}
 			}
 		}
 		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.unknown).forEach(listeFormat::add);
-		if(!listeFormat.isEmpty())
+		if(!listeFormat.isEmpty()) {
 			return listeFormat.get(0);
+		}
 		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.noVideo).forEach(listeFormat::add);
-		if(!listeFormat.isEmpty())
+		if(!listeFormat.isEmpty()) {
 			return listeFormat.get(0);
+		}
 		throw new NoVideoFoundException();
 	}
-	
+
 	public Format getMinVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) throws NoVideoFoundException {
 		List<Format> listeFormat = new ArrayList<>();
 		VideoQuality[] tabQuality = inverser(VideoQuality.values());
 		for(VideoQuality quality : tabQuality) {
 			if(quality != VideoQuality.unknown && quality != VideoQuality.noVideo) {
 				videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == quality).forEach(listeFormat::add);
-				if(!listeFormat.isEmpty())
+				if(!listeFormat.isEmpty()) {
 					return listeFormat.get(0);
+				}
 			}
 		}
 		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.unknown).forEach(listeFormat::add);
-		if(!listeFormat.isEmpty())
+		if(!listeFormat.isEmpty()) {
 			return listeFormat.get(0);
+		}
 		videoWithAudioFormats.stream().filter(vid -> vid.videoQuality() == VideoQuality.noVideo).forEach(listeFormat::add);
-		if(!listeFormat.isEmpty())
+		if(!listeFormat.isEmpty()) {
 			return listeFormat.get(0);
+		}
 		throw new NoVideoFoundException();
 	}
-	
+
 	public VideoQuality[] inverser(VideoQuality[] tabQuality) {
 		VideoQuality[] tab = new VideoQuality[tabQuality.length];
 		for(int i = tabQuality.length - 1; i >= 0; i--) {

@@ -13,27 +13,27 @@ import java.nio.file.StandardCopyOption;
 public class VideoFichier extends Video {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	public VideoFichier(String lien){
 		super("", lien);
 		File fichier = new File(lien);
-		this.titre = fichier.getName().substring(0, fichier.getName().lastIndexOf("."));
+		titre = fichier.getName().substring(0, fichier.getName().lastIndexOf("."));
 	}
 
 	@Override
 	public File convertToMp4(File folder) throws IOException {
 		File fichier = new File(lien);
-		File nouveauFichier = new File(folder.getPath() + "\\" + fichier.getName());
+		File nouveauFichier = new File(folder.getPath() + File.separator + fichier.getName());
 		return Files.copy(fichier.toPath(), nouveauFichier.toPath(), StandardCopyOption.REPLACE_EXISTING).toFile();
 	}
 
 	@Override
 	public File convertToMp4GoodQuality(File folder) throws Exception {
 		File fichier = new File(lien);
-		File nouveauFichier = new File(folder.getPath() + "\\" + fichier.getName());
+		File nouveauFichier = new File(folder.getPath() + File.separator + fichier.getName());
 		return Files.copy(fichier.toPath(), nouveauFichier.toPath(), StandardCopyOption.REPLACE_EXISTING).toFile();
 	}
 

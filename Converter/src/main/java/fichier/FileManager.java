@@ -17,7 +17,7 @@ import javafx.stage.Window;
 import prog.video.Video;
 
 /**
- * Classe permettant de pouvoir sauvegarder et charger des fichiers. 
+ * Classe permettant de pouvoir sauvegarder et charger des fichiers.
  * @author ronan
  *
  */
@@ -25,19 +25,20 @@ public class FileManager {
 
 	private static final String TYPE_FICHIER = "*.conv";
 	private static final String DESCRIPTION_TYPE_FICHIER = "CONVERTER FILE (.conv)";
-	
+
 	private static FileManager fileManager = null;
-	
+
 	public static FileManager getInstance() {
-		if(fileManager == null)
-			fileManager = new FileManager();
-		return fileManager;
+		if(FileManager.fileManager == null) {
+			FileManager.fileManager = new FileManager();
+		}
+		return FileManager.fileManager;
 	}
-	
+
 	private FileManager() {
 
 	}
-	
+
 	/**
 	 * Ouvre une fenêtre de séléction de fichier.
 	 * @param window
@@ -46,14 +47,15 @@ public class FileManager {
 	 */
 	public File getFile(Window window, String extension) {
 		FileChooser chooser = new FileChooser();
-		ExtensionFilter extFilter = new FileChooser.ExtensionFilter(DESCRIPTION_TYPE_FICHIER, TYPE_FICHIER);
+		ExtensionFilter extFilter = new FileChooser.ExtensionFilter(FileManager.DESCRIPTION_TYPE_FICHIER, FileManager.TYPE_FICHIER);
 		chooser.getExtensionFilters().add(extFilter);
 		File fichier = chooser.showOpenDialog(window);
-		if(fichier != null)
+		if(fichier != null) {
 			DirectoryChooserManager.getInstance("sauvegarder").setInitialDirectory(fichier);
+		}
 		return fichier;
 	}
-	
+
 	/**
 	 * Ouvre une fenêtre de sélection de dossier.
 	 * @param window
@@ -63,7 +65,7 @@ public class FileManager {
 		DirectoryChooser chooser = new DirectoryChooser();
 		return chooser.showDialog(window);
 	}
-	
+
 	/**
 	 * Demande un endroit de sauvegarde et sauvegarde les vidéos données dans un fichier.
 	 * @param window
@@ -74,13 +76,15 @@ public class FileManager {
 		FileChooser chooser = new FileChooser();
 		DirectoryChooser directory = DirectoryChooserManager.getInstance("sauvegarder");
 		chooser.setInitialDirectory(directory.getInitialDirectory());
-		ExtensionFilter extFilter = new FileChooser.ExtensionFilter(DESCRIPTION_TYPE_FICHIER, TYPE_FICHIER);
+		ExtensionFilter extFilter = new FileChooser.ExtensionFilter(FileManager.DESCRIPTION_TYPE_FICHIER, FileManager.TYPE_FICHIER);
 		chooser.getExtensionFilters().add(extFilter);
 		File file = directory.getInitialDirectory();
-		if(file == null)
+		if(file == null) {
 			file = chooser.showSaveDialog(window);
-		if(file == null)
+		}
+		if(file == null) {
 			return;
+		}
 		directory.setInitialDirectory(file);
 		FileOutputStream fos = null;
 		ObjectOutputStream output = null;
@@ -95,13 +99,15 @@ public class FileManager {
 			throw e;
 		}
 		finally {
-			if(output != null)
+			if(output != null) {
 				output.close();
-			if(fos != null)
+			}
+			if(fos != null) {
 				fos.close();
+			}
 		}
 	}
-	
+
 	/**
 	 * Retourne une liste de vidéos depuis un fichier demandé.
 	 * @param window
@@ -111,9 +117,10 @@ public class FileManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Video> load(Window window) throws IOException, ClassNotFoundException {
-		File file = fileManager.getFile(window, TYPE_FICHIER);
-		if(file == null)
-			return new ArrayList<Video>();
+		File file = FileManager.fileManager.getFile(window, FileManager.TYPE_FICHIER);
+		if(file == null) {
+			return new ArrayList<>();
+		}
 		FileInputStream fis = null;
 		ObjectInputStream input = null;
 		try {
@@ -125,10 +132,12 @@ public class FileManager {
 			throw e;
 		}
 		finally {
-			if(input != null)
+			if(input != null) {
 				input.close();
-			if(fis != null)
+			}
+			if(fis != null) {
 				fis.close();
+			}
 		}
 	}
 }

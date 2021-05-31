@@ -6,7 +6,6 @@ import ws.schild.jave.AudioAttributes;
 import ws.schild.jave.Encoder;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.EncodingAttributes;
-import ws.schild.jave.InputFormatException;
 import ws.schild.jave.MultimediaObject;
 
 /**
@@ -15,25 +14,27 @@ import ws.schild.jave.MultimediaObject;
  *
  */
 public class ConvertisseurMusique extends Convertisseur {
-	
+
 	public ConvertisseurMusique(int audioBitRate) {
 		super("mp3", audioBitRate, true);
 	}
-	
-	public File convertir(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
-		if(input.getPath().equals(output.getPath()))
+
+	@Override
+	public File convertir(File input, File output) throws IllegalArgumentException, EncoderException {
+		if(input.getPath().equals(output.getPath())) {
 			return input;
-		return this.convertirToMusique(input, output);
+		}
+		return convertirToMusique(input, output);
 	}
-	
-	protected File convertirToMusique(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
-		EncodingAttributes attrs = new EncodingAttributes(); 
-		AudioAttributes audio = new AudioAttributes(); 
+
+	protected File convertirToMusique(File input, File output) throws IllegalArgumentException, EncoderException {
+		EncodingAttributes attrs = new EncodingAttributes();
+		AudioAttributes audio = new AudioAttributes();
 		audio.setCodec("libmp3lame");
 		audio.setBitRate(audioBitRate);
 		audio.setChannels(2);
-		attrs.setAudioAttributes(audio); 
-		Encoder encoder = new Encoder();  
+		attrs.setAudioAttributes(audio);
+		Encoder encoder = new Encoder();
 		MultimediaObject multimediaObject = new MultimediaObject(input);
 		encoder.encode(multimediaObject, output, attrs);
 		return output;

@@ -74,7 +74,7 @@ import tache.TacheConvertirToFile;
 public class Selection extends BorderPane {
 
 	private static final double TAILLE_BOUTON = 100;
-	private static final String[] extensions = new String[] {"webm", "mp4"};
+	private static final String[] extensions = new String[] {"webm", "mp4", "avi"};
 	private final ProgressIndicator indicateur = new ProgressIndicator(0);
 	private final Label labelIndicateur = new Label("");
 	

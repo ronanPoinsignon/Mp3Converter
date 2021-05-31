@@ -20,15 +20,15 @@ public abstract class Convertisseur {
 	protected String extension;
 	protected int audioBitRate;
 	protected boolean hasSound;
-	
-	public Convertisseur(String extension, int audioBitRate, boolean hasSound) {
+
+	protected Convertisseur(String extension, int audioBitRate, boolean hasSound) {
 		this.extension = extension;
 		this.audioBitRate = audioBitRate;
 		this.hasSound = hasSound;
 	}
-	
+
 	public abstract File convertir(File input, File output) throws Exception;
-	
+
 	/**
 	 * Enlève le son de la vidéo.
 	 * @param input
@@ -38,20 +38,20 @@ public abstract class Convertisseur {
 	 * @throws InputFormatException
 	 * @throws EncoderException
 	 */
-	protected File convertirToVideoSansSon(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
+	protected File convertirToVideoSansSon(File input, File output) throws IllegalArgumentException, EncoderException {
 		EncodingAttributes attrs = new EncodingAttributes();
-		VideoAttributes video = new VideoAttributes(); 
+		VideoAttributes video = new VideoAttributes();
 		video.setCodec("libx264");
 		video.setBitRate(80000);
-		video.setFrameRate (new Integer (15));
+		video.setFrameRate(15);
 		attrs.setFormat(extension);
 		attrs.setVideoAttributes(video);
-		Encoder encoder = new Encoder();  
+		Encoder encoder = new Encoder();
 		MultimediaObject multimediaObject = new MultimediaObject(input);
 		encoder.encode(multimediaObject, output, attrs);
 		return output;
 	}
-	
+
 	/**
 	 * Convertit le fichier donné en vidéo.
 	 * @param input
@@ -61,22 +61,22 @@ public abstract class Convertisseur {
 	 * @throws InputFormatException
 	 * @throws EncoderException
 	 */
-	protected File convertirToVideo(File input, File output) throws IllegalArgumentException, InputFormatException, EncoderException {
-		EncodingAttributes attrs = new EncodingAttributes(); 
+	protected File convertirToVideo(File input, File output) throws IllegalArgumentException, EncoderException {
+		EncodingAttributes attrs = new EncodingAttributes();
 		if(audioBitRate > 0) {
-			AudioAttributes audio = new AudioAttributes(); 
+			AudioAttributes audio = new AudioAttributes();
 			audio.setCodec("libmp3lame");
 			audio.setBitRate(audioBitRate);
 			audio.setChannels(2);
 			attrs.setAudioAttributes(audio);
 		}
-		VideoAttributes video = new VideoAttributes(); 
+		VideoAttributes video = new VideoAttributes();
 		video.setCodec("libx264");
 		video.setBitRate(800000);
-		video.setFrameRate (new Integer (15));
+		video.setFrameRate (15);
 		attrs.setFormat(extension);
 		attrs.setVideoAttributes(video);
-		Encoder encoder = new Encoder();  
+		Encoder encoder = new Encoder();
 		MultimediaObject multimediaObject = new MultimediaObject(input);
 		encoder.encode(multimediaObject, output, attrs);
 		return output;
@@ -97,5 +97,5 @@ public abstract class Convertisseur {
 	public void setHasSound(boolean hasSound) {
 		this.hasSound = hasSound;
 	}
-	
+
 }

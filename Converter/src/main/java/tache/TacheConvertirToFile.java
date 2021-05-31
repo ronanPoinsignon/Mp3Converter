@@ -31,14 +31,14 @@ public class TacheConvertirToFile extends Task<List<File>> {
 	private File folder;
 	private int bitRate;
 	private List<String> listeExtensions;
-	
+
 	public TacheConvertirToFile(List<Video> listeVideos, File folder, int bitRate, List<String> listeExtensions) {
 		this.listeVideos = listeVideos;
 		this.folder = folder;
 		this.bitRate = bitRate;
 		this.listeExtensions = listeExtensions;
 	}
-	
+
 	@Override
 	protected List<File> call() {
 		ArrayList<File> listeFichiers = new ArrayList<>();
@@ -48,40 +48,41 @@ public class TacheConvertirToFile extends Task<List<File>> {
 			int tailleListe = listeVideos.size();
 			boolean hasMp4;
 			int cpt = 0;
-	
+
 			if(folder == null) {
-				return new ArrayList<File>();
+				return new ArrayList<>();
 			}
 			if(listeExtensions.isEmpty()) {
-				return new ArrayList<File>();
+				return new ArrayList<>();
 			}
 			hasMp4 = listeExtensions.contains("mp4");
 			File folderMp4 = null;
 			if(hasMp4) {
-				folderMp4 = new File(folder.getPath() + "\\mp4");
+				folderMp4 = new File(folder.getPath() + File.separator + "mp4");
 			}
 			else {
-				folderMp4 = new File(folder.getPath() + "\\mp4H");
+				folderMp4 = new File(folder.getPath() + File.separator + "mp4H");
 			}
 			folderMp4.mkdirs();
 			if(hasMp4) {
 				listeExtensions.remove("mp4");
-			}
-			else
+			} else {
 				try {
 					Files.setAttribute(Paths.get(folderMp4.getPath()), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
 				} catch (IOException e) {
 					Logger.getInstance().showErrorAlert(e);
 					e.printStackTrace();
 				}
+			}
 			for(Video video : listeVideos) {
 				try {
-					listeFichiers.add(this.convertVideo(video, folder, folderMp4, hasMp4));
+					listeFichiers.add(convertVideo(video, folder, folderMp4, hasMp4));
 				}
 				catch(EncoderException e) {
 					e.printStackTrace();
-					if(!listeMauvaisFichiers.contains(video))
+					if(!listeMauvaisFichiers.contains(video)) {
 						listeMauvaisFichiers.add(video);
+					}
 				}
 				catch(NoVideoFoundException e) {
 					e.printStackTrace();
@@ -96,8 +97,9 @@ public class TacheConvertirToFile extends Task<List<File>> {
 			Logger.getInstance().showWarningAlertIsNotVideoFile(listeMauvaisFichiers);
 			Logger.getInstance().showErrorAlertNoVideoFound(listeVideoSansTelechargement);
 			try {
-				if(!hasMp4)
+				if(!hasMp4) {
 					deleteFile(folderMp4);
+				}
 			} catch (IOException e) {
 				Logger.getInstance().showErrorAlert(e);
 			}
@@ -107,23 +109,23 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		}
 		return listeFichiers;
 	}
-	
+
 	/**
 	 * Modifie le message pour qu'il soit conforme avec le déroulement de la tâche.
 	 * @param video
 	 * @throws Exception
 	 */
-	private void update(Video video) throws Exception {
-        this.updateMessage("en téléchargement : " + video.getTitre());
-    }
-	
+	private void update(Video video) {
+		updateMessage("en téléchargement : " + video.getTitre());
+	}
+
 	private void deleteFile(File folder) throws IOException {
 		Files.walk(folder.toPath())
-			.sorted(Comparator.reverseOrder())
-			.map(Path::toFile)
-			.forEach(File::delete);
+		.sorted(Comparator.reverseOrder())
+		.map(Path::toFile)
+		.forEach(File::delete);
 	}
-	
+
 	/**
 	 * Covertit la {@link Video} en fichier vidéo.
 	 * @param video
@@ -138,35 +140,36 @@ public class TacheConvertirToFile extends Task<List<File>> {
 		File fichier = null, fichierMp4 = null;
 		Convertisseur convertisseur = null;
 		try {
-			this.update(video);
+			update(video);
 		} catch (Exception e) {
 			Logger.getInstance().showErrorAlert(e);
 		}
 		if(goodQuality) {
 			fichierMp4 = video.convertToMp4GoodQuality(folderMp4);
-		}
-		else
+		} else {
 			fichierMp4 = video.convertToMp4(folderMp4);
+		}
 		listeMp4.add(fichierMp4);
 		String titre = Utils.removeIllegalChars(video.getTitre());
 		for(String extension : listeExtensions) {
-			this.updateMessage("conversion de " + titre + " en " + extension);
-			File folderVideo = new File(folder + "\\" + extension.toLowerCase());
-			if(!folderVideo.exists())
+			updateMessage("conversion de " + titre + " en " + extension);
+			File folderVideo = new File(folder + File.separator + extension.toLowerCase());
+			if(!folderVideo.exists()) {
 				folderVideo.mkdirs();
-			fichier = new File(folderVideo.getPath() + "\\" + titre + "." + extension.toLowerCase());
+			}
+			fichier = new File(folderVideo.getPath() + File.separator + titre + "." + extension.toLowerCase());
 			if(extension.equalsIgnoreCase("mp3")) {
 				convertisseur = new ConvertisseurMusique(bitRate);
-			}
-			else
+			} else {
 				convertisseur = new ConvertisseurVideo(extension, bitRate, true);
+			}
 			if(!extension.equalsIgnoreCase("mp4")) {
 				fichier = convertisseur.convertir(fichierMp4, fichier);
 			}
 		}
 		return fichier;
 	}
-	
+
 	/**
 	 * Supprime le fichier donné en paramètre.
 	 * @param folder
