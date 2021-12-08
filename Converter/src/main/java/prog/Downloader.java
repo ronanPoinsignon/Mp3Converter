@@ -11,10 +11,12 @@ import java.util.List;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
 import com.github.kiulian.downloader.YoutubeException;
-import com.github.kiulian.downloader.model.YoutubeVideo;
-import com.github.kiulian.downloader.model.formats.AudioVideoFormat;
-import com.github.kiulian.downloader.model.formats.Format;
-import com.github.kiulian.downloader.model.quality.VideoQuality;
+import com.github.kiulian.downloader.downloader.request.RequestVideoInfo;
+import com.github.kiulian.downloader.downloader.response.Response;
+import com.github.kiulian.downloader.model.videos.VideoInfo;
+import com.github.kiulian.downloader.model.videos.formats.VideoFormat;
+import com.github.kiulian.downloader.model.videos.formats.VideoWithAudioFormat;
+import com.github.kiulian.downloader.model.videos.quality.VideoQuality;
 
 import exception.NoVideoFoundException;
 
@@ -62,12 +64,14 @@ public class Downloader {
 		YoutubeDownloader downloader = new YoutubeDownloader();
 		//downloader.addCipherFunctionPattern(2, "\\b([a-zA-Z0-9$]{2})\\s*=\\s*function\\(\\s*a\\s*\\)\\s*\\{\\s*a\\s*=\\s*a\\.split\\(\\s*\"\"\\s*\\)");
 		//downloader.setParserRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
-		downloader.setParserRetryOnFailure(1);
+		//downloader.setParserRetryOnFailure(1);
 
-		YoutubeVideo video = downloader.getVideo(videoId);
+		RequestVideoInfo request = new RequestVideoInfo(videoId);
+		Response<VideoInfo> response = downloader.getVideoInfo(request);
+		VideoInfo video = response.data();
 
-		List<AudioVideoFormat> videoWithAudioFormats = video.videoWithAudioFormats();
-		Format format = null;
+		List<VideoWithAudioFormat> videoWithAudioFormats = video.videoWithAudioFormats();
+		VideoFormat format = null;
 		if(goodVideo) {
 			format = getMaxVideoQuality(videoWithAudioFormats); //return the better video quality -> throw NoVideoFoundException if no video found
 		}
@@ -90,8 +94,8 @@ public class Downloader {
 		return fichierVideo;
 	}
 
-	public Format getMaxVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) throws NoVideoFoundException {
-		List<Format> listeFormat = new ArrayList<>();
+	public VideoFormat getMaxVideoQuality(List<VideoWithAudioFormat> videoWithAudioFormats) throws NoVideoFoundException {
+		List<VideoFormat> listeFormat = new ArrayList<>();
 		VideoQuality[] tabQuality = VideoQuality.values();
 		for(VideoQuality quality : tabQuality) {
 			if(quality != VideoQuality.unknown && quality != VideoQuality.noVideo) {
@@ -112,8 +116,8 @@ public class Downloader {
 		throw new NoVideoFoundException();
 	}
 
-	public Format getMinVideoQuality(List<AudioVideoFormat> videoWithAudioFormats) throws NoVideoFoundException {
-		List<Format> listeFormat = new ArrayList<>();
+	public VideoFormat getMinVideoQuality(List<VideoWithAudioFormat> videoWithAudioFormats) throws NoVideoFoundException {
+		List<VideoFormat> listeFormat = new ArrayList<>();
 		VideoQuality[] tabQuality = inverser(VideoQuality.values());
 		for(VideoQuality quality : tabQuality) {
 			if(quality != VideoQuality.unknown && quality != VideoQuality.noVideo) {
