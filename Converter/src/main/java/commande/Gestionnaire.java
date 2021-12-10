@@ -12,24 +12,25 @@ import exception.CommandeNonTrouveeException;
 public class Gestionnaire {
 
 	private static Gestionnaire gestionnaire = null;
-	
+
 	public static Gestionnaire getInstance() {
-		if(gestionnaire == null)
-			gestionnaire = new Gestionnaire();
-		return gestionnaire;
+		if(Gestionnaire.gestionnaire == null) {
+			Gestionnaire.gestionnaire = new Gestionnaire();
+		}
+		return Gestionnaire.gestionnaire;
 	}
-	
-	private ArrayList<CommandeInterface> listeCommandes = new ArrayList<CommandeInterface>();
-	private ArrayList<CommandeInterface> listeCommandesEffectuees = new ArrayList<CommandeInterface>();
-	private ArrayList<CommandeInterface> listeCommandesAnnulees = new ArrayList<CommandeInterface>();
-	private ArrayList<CommandeInterface> listeCommandesAReexecuteer = new ArrayList<CommandeInterface>();
-	
+
+	private ArrayList<CommandeInterface> listeCommandes = new ArrayList<>();
+	private ArrayList<CommandeInterface> listeCommandesEffectuees = new ArrayList<>();
+	private ArrayList<CommandeInterface> listeCommandesAnnulees = new ArrayList<>();
+	private ArrayList<CommandeInterface> listeCommandesAReexecuteer = new ArrayList<>();
+
 	private int cptActions = 0;
-	
+
 	private Gestionnaire() {
-		
+
 	}
-	
+
 	/**
 	 * Ajoute une commande à la liste des commandes devant être effectuées.
 	 * @param commande
@@ -38,7 +39,7 @@ public class Gestionnaire {
 		listeCommandes.add(commande);
 		return this;
 	}
-	
+
 	/**
 	 * Exécute la prochaine commande de la liste des commandes à faire.
 	 */
@@ -46,12 +47,12 @@ public class Gestionnaire {
 		CommandeInterface commande = listeCommandes.remove(0);
 		if(commande.executer()) {
 			listeCommandesEffectuees.add(commande);
-			listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
+			listeCommandesAReexecuteer.clear();
 			cptActions++;
 		}
 		return this;
 	}
-	
+
 	/**
 	 * Exécute toute les commandes de la liste des commandes à faire.
 	 */
@@ -66,16 +67,17 @@ public class Gestionnaire {
 		listeCommandesAReexecuteer.removeAll(listeCommandes);
 		return this;
 	}
-	
+
 	/**
-	 * Exécute une commande de la liste des commandes à faire. Renvoie une exception 
+	 * Exécute une commande de la liste des commandes à faire. Renvoie une exception
 	 * si la commande ne se trouve pas dans cette liste.
 	 * @param commande
 	 * @throws CommandeNonTrouveeException
 	 */
 	public Gestionnaire executer(Commande commande) throws CommandeNonTrouveeException {
-		if(!listeCommandes.contains(commande))
+		if(!listeCommandes.contains(commande)) {
 			throw new CommandeNonTrouveeException();
+		}
 		if(commande.executer()) {
 			commande.executer();
 			listeCommandes.remove(commande);
@@ -85,12 +87,12 @@ public class Gestionnaire {
 		}
 		return this;
 	}
-	
+
 	public Gestionnaire executerInstant(Commande commande) {
 		commande.executer();
 		return this;
 	}
-	
+
 	/**
 	 * Annule la dernière commande effectuée.
 	 */
@@ -103,7 +105,7 @@ public class Gestionnaire {
 		}
 		return this;
 	}
-	
+
 	/**
 	 * Réexécute la commande annulée.
 	 */
@@ -115,15 +117,15 @@ public class Gestionnaire {
 		}
 		return this;
 	}
-	
+
 	public Gestionnaire clean() {
-		listeCommandes.removeAll(listeCommandes);
-		listeCommandesAnnulees.removeAll(listeCommandesAnnulees);
-		listeCommandesAReexecuteer.removeAll(listeCommandesAReexecuteer);
-		listeCommandesEffectuees.removeAll(listeCommandesEffectuees);
+		listeCommandes.clear();
+		listeCommandesAnnulees.clear();
+		listeCommandesAReexecuteer.clear();
+		listeCommandesEffectuees.clear();
 		return this;
 	}
-	
+
 	/**
 	 * Retourne TRUE si il est possible de sauvegarder sa liste de vidéos.
 	 * @return
@@ -131,7 +133,7 @@ public class Gestionnaire {
 	public boolean canSave() {
 		return cptActions != 0;
 	}
-	
+
 	/**
 	 * Retourne TRUE si il est possible d'annuler la dernière commande effectuée.
 	 * @return
@@ -139,7 +141,7 @@ public class Gestionnaire {
 	public boolean canAnnuler() {
 		return !listeCommandesEffectuees.isEmpty();
 	}
-	
+
 	/**
 	 * Retourne TRUE si il est possible de refaire la dernière commande annulée.
 	 * @return
@@ -147,7 +149,7 @@ public class Gestionnaire {
 	public boolean canReexecuter() {
 		return !listeCommandesAReexecuteer.isEmpty();
 	}
-	
+
 	public void notifySave() {
 		cptActions = 0;
 	}

@@ -29,16 +29,16 @@ public class VideoYtb extends Video {
 
 	private String id;
 
-	public VideoYtb(String url) throws YoutubeException, IOException {
+	public VideoYtb(String url) throws NoVideoFoundException {
 		YoutubeDownloader downloader = new YoutubeDownloader();
-		//downloader.addCipherFunctionPattern(2, "\\b([a-zA-Z0-9$]{2})\\s*=\\s*function\\(\\s*a\\s*\\)\\s*\\{\\s*a\\s*=\\s*a\\.split\\(\\s*\"\"\\s*\\)");
-		//downloader.setParserRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
-		//downloader.setParserRetryOnFailure(1);
 		lien = url;
 		id = Utils.getvideoId(url);
 		RequestVideoInfo request = new RequestVideoInfo(id);
 		Response<VideoInfo> response = downloader.getVideoInfo(request);
 		VideoInfo video = response.data();
+		if(video == null) {
+			throw new NoVideoFoundException();
+		}
 		titre = video.details().title();
 	}
 
@@ -92,11 +92,7 @@ public class VideoYtb extends Video {
 			return false;
 		}
 		VideoYtb other = (VideoYtb) obj;
-		if(id.equals(other.getId()) && titre.equals(other.getTitre())) {
-			return true;
-		} else {
-			return false;
-		}
+		return id.equals(other.getId()) && titre.equals(other.getTitre());
 	}
 
 }

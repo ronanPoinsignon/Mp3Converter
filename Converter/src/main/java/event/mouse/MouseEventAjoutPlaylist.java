@@ -6,7 +6,7 @@ import javafx.scene.input.MouseEvent;
 import prog.Utils;
 
 public class MouseEventAjoutPlaylist extends MouseEventHandler {
-	
+
 	public MouseEventAjoutPlaylist(Selection selection) {
 		super(selection);
 	}
@@ -17,7 +17,6 @@ public class MouseEventAjoutPlaylist extends MouseEventHandler {
 		try {
 			url = Utils.showInputDIalogAjout();
 		} catch (PasDeResultatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		selection.ajouterPlaylist(url);

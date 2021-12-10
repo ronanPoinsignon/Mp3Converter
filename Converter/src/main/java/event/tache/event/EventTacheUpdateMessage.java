@@ -11,16 +11,16 @@ import javafx.event.EventType;
 public class EventTacheUpdateMessage extends EventTacheUpdated {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	public static final EventType<EventTacheUpdateMessage> EVENT_UPDATE_MESSAGE = 
-			new EventType<EventTacheUpdateMessage>(EVENT_UPDATE, "UPDATE_MESSAGE");
-	
+	public static final EventType<EventTacheUpdateMessage> EVENT_UPDATE_MESSAGE =
+			new EventType<>(EventTacheUpdated.EVENT_UPDATE, "UPDATE_MESSAGE");
+
 	private String message;
-	
+
 	public EventTacheUpdateMessage(String message) {
-		super(EVENT_UPDATE_MESSAGE);
+		super(EventTacheUpdateMessage.EVENT_UPDATE_MESSAGE);
 		this.message = message;
 	}
 

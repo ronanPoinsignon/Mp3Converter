@@ -14,15 +14,16 @@ import prog.video.Video;
 public class CommandeReset extends CommandeListe {
 
 	List<Video> listeVideosSupprimees = new ArrayList<>();
-	
+
 	public CommandeReset(TableVideo table, List<Video> listeVideos) {
 		super(table, listeVideos);
 	}
 
 	@Override
 	public boolean executer() {
-		if(table.getItems().equals(listeVideos))
+		if(table.getItems().equals(listeVideos)) {
 			return false;
+		}
 		listeVideosSupprimees = table.removeAll();
 		table.addAll(listeVideos);
 		return !listeVideos.isEmpty();
@@ -32,13 +33,6 @@ public class CommandeReset extends CommandeListe {
 	public boolean annuler() {
 		table.removeAll();
 		table.addAll(listeVideosSupprimees);
-		return !listeVideos.isEmpty();
-	}
-
-	@Override
-	public boolean reexecuter() {
-		listeVideosSupprimees = table.removeAll();
-		table.addAll(listeVideos);
 		return !listeVideos.isEmpty();
 	}
 

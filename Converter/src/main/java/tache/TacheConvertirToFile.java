@@ -49,12 +49,10 @@ public class TacheConvertirToFile extends Task<List<File>> {
 			boolean hasMp4;
 			int cpt = 0;
 
-			if(folder == null) {
+			if(folder == null || listeExtensions.isEmpty()) {
 				return new ArrayList<>();
 			}
-			if(listeExtensions.isEmpty()) {
-				return new ArrayList<>();
-			}
+
 			hasMp4 = listeExtensions.contains("mp4");
 			File folderMp4 = null;
 			if(hasMp4) {
@@ -137,7 +135,8 @@ public class TacheConvertirToFile extends Task<List<File>> {
 	 */
 	private File convertVideo(Video video, File folder, File folderMp4, boolean goodQuality) throws Exception {
 		ArrayList<File> listeMp4 = new ArrayList<>();
-		File fichier = null, fichierMp4 = null;
+		File fichier = null;
+		File fichierMp4 = null;
 		Convertisseur convertisseur = null;
 		try {
 			update(video);

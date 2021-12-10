@@ -12,8 +12,8 @@ import javafx.event.EventHandler;
 public abstract class ActionEventHandler implements EventHandler<ActionEvent> {
 
 	protected Selection selection;
-	
-	public ActionEventHandler(Selection selection) {
+
+	protected ActionEventHandler(Selection selection) {
 		this.selection = selection;
 	}
 

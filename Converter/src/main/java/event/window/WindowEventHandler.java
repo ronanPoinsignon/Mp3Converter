@@ -12,8 +12,8 @@ import javafx.stage.WindowEvent;
 public abstract class WindowEventHandler implements EventHandler<WindowEvent>{
 
 	Selection selection;
-	
-	public WindowEventHandler(Selection selection) {
+
+	protected WindowEventHandler(Selection selection) {
 		this.selection = selection;
 	}
 }

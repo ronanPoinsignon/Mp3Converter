@@ -8,11 +8,11 @@ import affichage.demande.TableVideo;
  *
  */
 public abstract class Commande implements CommandeInterface {
-	
+
 	protected TableVideo table;
-	
-	public Commande(TableVideo table) {
+
+	protected Commande(TableVideo table) {
 		this.table = table;
 	}
-	
+
 }

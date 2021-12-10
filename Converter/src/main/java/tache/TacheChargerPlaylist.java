@@ -1,16 +1,16 @@
 package tache;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.kiulian.downloader.YoutubeDownloader;
-import com.github.kiulian.downloader.YoutubeException;
 import com.github.kiulian.downloader.downloader.request.RequestPlaylistInfo;
 import com.github.kiulian.downloader.downloader.response.Response;
 import com.github.kiulian.downloader.model.playlist.PlaylistInfo;
 import com.github.kiulian.downloader.model.playlist.PlaylistVideoDetails;
 
+import log.Logger;
 import prog.video.Video;
 import prog.video.VideoYtb;
 
@@ -25,7 +25,7 @@ public class TacheChargerPlaylist extends Tache<List<Video>> {
 	}
 
 	@Override
-	protected List<Video> call() throws Exception {
+	protected List<Video> call() {
 		updateMessage("Téléchargement des vidéos");
 		YoutubeDownloader downloader = new YoutubeDownloader();
 		PlaylistInfo playlist = null;
@@ -33,8 +33,14 @@ public class TacheChargerPlaylist extends Tache<List<Video>> {
 		RequestPlaylistInfo request = new RequestPlaylistInfo(id);
 		Response<PlaylistInfo> response = downloader.getPlaylistInfo(request);
 		playlist = response.data();
+		if(playlist == null) {
+			Logger.getInstance().showWarningAlertBadPlaylistLink();
+			this.updateProgress(1, 1);
+			return Collections.emptyList();
+		}
 		List<PlaylistVideoDetails> videos = playlist.videos();
-		int i = 0, max = videos.size();
+		int i = 0;
+		int max = videos.size();
 		for(PlaylistVideoDetails video : videos) {
 			Video vid = null;
 			try {
@@ -42,10 +48,6 @@ public class TacheChargerPlaylist extends Tache<List<Video>> {
 				updateMessage("Conversion de : " + vid.getTitre());
 				liste.add(vid);
 				this.updateProgress(++i, max);
-			}
-			catch(YoutubeException | IOException e) {
-				listeVideoError.add(video.title());
-				e.printStackTrace();
 			}
 			catch(Exception e) {
 				e.printStackTrace();

@@ -13,13 +13,13 @@ import prog.video.Video;
  *
  */
 public class CommandeSuppression extends CommandeListe {
-	
+
 	private List<Integer> listeIndex = new ArrayList<>();
-	
+
 	public CommandeSuppression(TableVideo table, List<Video> listeVideos) {
 		super(table, listeVideos);
 	}
-	
+
 	@Override
 	public boolean executer() {
 		for(Video video : listeVideos) {
@@ -29,33 +29,19 @@ public class CommandeSuppression extends CommandeListe {
 		listeVideos.removeAll(listeVideosNonPresentes);
 		return !listeVideos.isEmpty();
 	}
-	
+
 	@Override
 	public boolean annuler() {
 		for(int i = 0; i < listeVideos.size(); i++) {
 			try {
 				int index = listeIndex.get(i);
 				table.add(listeVideos.get(i), index);
-				for(int ind : listeIndex) {
-					if(ind >= index)
-						ind++;
-				}
 			} catch (UnsupportedOperationException | ClassCastException | NullPointerException
 					| IllegalArgumentException | VideoDejaPresenteException e) {
 				e.printStackTrace();
 			}
 		}
 		listeIndex = new ArrayList<>();
-		return !listeVideos.isEmpty();
-	}
-
-	@Override
-	public boolean reexecuter() {
-		for(Video video : listeVideos) {
-			listeIndex.add(table.getItems().indexOf(video));
-		}
-		List<Video> listeVideosNonPresentes = table.removeAll(listeVideos);
-		listeVideos.removeAll(listeVideosNonPresentes);
 		return !listeVideos.isEmpty();
 	}
 

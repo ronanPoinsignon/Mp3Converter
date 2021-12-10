@@ -11,16 +11,17 @@ import javafx.event.EventType;
 public class EventTacheUpdateProgress extends EventTacheUpdated {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	public static final EventType<EventTacheUpdateProgress> EVENT_UPDATE_PROGRESS = 
-			new EventType<EventTacheUpdateProgress>(EVENT_UPDATE, "UPDATE_MESSAGE");
+	public static final EventType<EventTacheUpdateProgress> EVENT_UPDATE_PROGRESS =
+			new EventType<>(EventTacheUpdated.EVENT_UPDATE, "UPDATE_MESSAGE");
 
-	private long workDone, max;
-	
+	private long workDone;
+	private long max;
+
 	public EventTacheUpdateProgress(long workDone, long max) {
-		super(EVENT_UPDATE_PROGRESS);
+		super(EventTacheUpdateProgress.EVENT_UPDATE_PROGRESS);
 		this.workDone = workDone;
 		this.max = max;
 	}

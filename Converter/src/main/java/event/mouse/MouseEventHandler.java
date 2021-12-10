@@ -12,8 +12,8 @@ import javafx.scene.input.MouseEvent;
 public abstract class MouseEventHandler implements EventHandler<MouseEvent> {
 
 	Selection selection;
-	
-	public MouseEventHandler(Selection selection) {
+
+	protected MouseEventHandler(Selection selection) {
 		this.selection = selection;
 	}
 }

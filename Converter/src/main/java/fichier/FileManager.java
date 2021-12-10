@@ -45,7 +45,7 @@ public class FileManager {
 	 * @param extension
 	 * @return
 	 */
-	public File getFile(Window window, String extension) {
+	public File getFile(Window window) {
 		FileChooser chooser = new FileChooser();
 		ExtensionFilter extFilter = new FileChooser.ExtensionFilter(FileManager.DESCRIPTION_TYPE_FICHIER, FileManager.TYPE_FICHIER);
 		chooser.getExtensionFilters().add(extFilter);
@@ -86,25 +86,10 @@ public class FileManager {
 			return;
 		}
 		directory.setInitialDirectory(file);
-		FileOutputStream fos = null;
-		ObjectOutputStream output = null;
-		try {
-			fos = new FileOutputStream(file);
-			output = new ObjectOutputStream(fos);
+		try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))){
 			output.writeObject(listeVideos);
 			output.flush();
 			Gestionnaire.getInstance().notifySave();
-		}
-		catch(IOException e) {
-			throw e;
-		}
-		finally {
-			if(output != null) {
-				output.close();
-			}
-			if(fos != null) {
-				fos.close();
-			}
 		}
 	}
 
@@ -117,27 +102,12 @@ public class FileManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Video> load(Window window) throws IOException, ClassNotFoundException {
-		File file = FileManager.fileManager.getFile(window, FileManager.TYPE_FICHIER);
+		File file = FileManager.fileManager.getFile(window);
 		if(file == null) {
 			return new ArrayList<>();
 		}
-		FileInputStream fis = null;
-		ObjectInputStream input = null;
-		try {
-			fis = new FileInputStream(file);
-			input = new ObjectInputStream(fis);
+		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream(file))){
 			return (List<Video>) input.readObject();
-		}
-		catch(IOException e) {
-			throw e;
-		}
-		finally {
-			if(input != null) {
-				input.close();
-			}
-			if(fis != null) {
-				fis.close();
-			}
 		}
 	}
 }

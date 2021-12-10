@@ -13,6 +13,16 @@ import javafx.concurrent.Task;
  */
 public abstract class Tache<T> extends Task<T> {
 
+	protected Tache() {
+		exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+			if(newValue != null) {
+				Exception ex = (Exception) newValue;
+				ex.printStackTrace();
+				this.cancel();
+			}
+		});
+	}
+
 	@Override
 	public void updateMessage(String msg) {
 		super.updateMessage(msg);
@@ -48,12 +58,6 @@ public abstract class Tache<T> extends Task<T> {
 	 * @param event
 	 */
 	private void fireUpdateEvent(final EventTacheUpdated event) {
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				Tache.this.fireEvent(event);
-			}
-		});
+		Platform.runLater(() -> Tache.this.fireEvent(event));
 	}
 }

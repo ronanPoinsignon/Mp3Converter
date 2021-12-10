@@ -11,8 +11,9 @@ import affichage.demande.TableVideo;
  */
 public class CommandeInversion extends Commande {
 
-	int inv1, inv2;
-	
+	int inv1;
+	int inv2;
+
 	public CommandeInversion(TableVideo table, int inv1, int inv2) {
 		super(table);
 		this.inv1 = inv1;
@@ -34,17 +35,6 @@ public class CommandeInversion extends Commande {
 	public boolean annuler() {
 		try {
 			Collections.swap(table.getItems(), inv2, inv1);
-			return true;
-		}
-		catch(ArrayIndexOutOfBoundsException e) {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean reexecuter() {
-		try {
-			Collections.swap(table.getItems(), inv1, inv2);
 			return true;
 		}
 		catch(ArrayIndexOutOfBoundsException e) {
